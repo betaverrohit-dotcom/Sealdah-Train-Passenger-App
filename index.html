@@ -128,7 +128,7 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 <div id="toast" class="toast"></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-const API_BASE="https://whatsapp-ai-bot-6sva.onrender.com";
+const API_BASE="https://wtvrbfqezpmxutnwjdsp.supabase.co/functions/v1/railradar-proxy";
 const rawStations=[
             {c:'SDAH', n:'Sealdah'}, {c:'BNXR', n:'Bidhannagar Road'}, {c:'DDJ', n:'Dum Dum Jn'}, {c:'BLH', n:'Belgharia'}, {c:'AGP', n:'Agarpara'}, {c:'SEP', n:'Sodepur'}, {c:'KDH', n:'Khardah'}, {c:'TGH', n:'Titagarh'}, {c:'BP', n:'Barrackpur'}, {c:'PT', n:'Palta'}, {c:'IP', n:'Ichhapur'}, {c:'SNR', n:'Shyamnagar'}, {c:'JGDL', n:'Jagaddal'}, {c:'KNR', n:'Kankinara'}, {c:'NH', n:'Naihati'}, {c:'HLR', n:'Halisahar'}, {c:'KPA', n:'Kanchrapara'}, {c:'KYI', n:'Kalyani'}, {c:'MPJ', n:'Madanpur'}, {c:'SMX', n:'Simurali'}, {c:'PXR', n:'Palpara'}, {c:'CDH', n:'Chakdah'}, {c:'PDX', n:'Payradanga'}, {c:'RHA', n:'Ranaghat'},
             {c:'KLNP', n:'Kalinarayanpur'}, {c:'BIJ', n:'Birnagar'}, {c:'THP', n:'Taherpur'}, {c:'BDZ', n:'Badkulla'}, {c:'AG', n:'Aranghata'}, {c:'BNKA', n:'Bankimnagar'}, {c:'MAJ', n:'Majhergram'}, {c:'BHNA', n:'Bhayna'}, {c:'BGL', n:'Bagula'}, {c:'MYHT', n:'Mayurhat'}, {c:'TNX', n:'Taraknagar'}, {c:'MIJ', n:'Majhdia'}, {c:'BPN', n:'Banpur'}, {c:'HRSR', n:'Harishnagar'}, {c:'GEDE', n:'Gede'}, {c:'HBE', n:'Habibpur'}, {c:'FLU', n:'Fulia'}, {c:'STB', n:'Shantipur'}, {c:'BTKB', n:'Bathna Krittibas'},
@@ -156,9 +156,48 @@ function openPage(page){document.querySelectorAll(".page").forEach(x=>x.classLis
 function setupAutocomplete(input,list){input.addEventListener("input",()=>{const q=input.value.toLowerCase().trim();list.innerHTML="";if(!q)return list.classList.add("hidden");const arr=stations.filter(s=>s.name.toLowerCase().includes(q)||s.code.toLowerCase().includes(q)).slice(0,12);arr.forEach(s=>{const d=document.createElement("div");d.className="autoitem";d.innerHTML='<span class="code">'+s.code+'</span><span>'+s.name+"</span>";d.onclick=()=>{input.value=s.name;input.dataset.code=s.code;list.classList.add("hidden")};list.appendChild(d)});list.classList.remove("hidden")});document.addEventListener("click",e=>{if(e.target!==input&&!list.contains(e.target))list.classList.add("hidden")})}
 setupAutocomplete($("from"),$("fromList"));setupAutocomplete($("to"),$("toList"));
 function swapRoute(){[$("from").value,$("to").value]=[$("to").value,$("from").value];[$("from").dataset.code,$("to").dataset.code]=[$("to").dataset.code,$("from").dataset.code]}
-function searchTrains(){const a=$("from").value.trim(),b=$("to").value.trim();if(!a||!b)return toast("Select both stations.");$("routeLabel").textContent=a+" → "+b;openPage("trains");$("trainResults").innerHTML="";for(let i=0;i<4;i++){const d=document.createElement("div");d.className="train";d.innerHTML='<div><h3>'+((i===0?"Sealdah":a.split(" ")[0])+" • "+(10000+i*137))+'</h3><p>Departure '+String(6+i).padStart(2,"0")+":0"+(i+1)+' • Arrival '+String(7+i).padStart(2,"0")+":2"+i+' • '+b+'</p></div><span class="livepill">LIVE READY</span>';d.onclick=()=>showRoute(a,b);$("trainResults").appendChild(d)}toast("Route loaded.")}
+async function searchTrains(){
+  const fromInput=$("from"),toInput=$("to");
+  const a=fromInput.value.trim(),b=toInput.value.trim();
+  const fs=stations.find(s=>s.name.toLowerCase()===a.toLowerCase()||s.code.toLowerCase()===a.toLowerCase());
+  const ts=stations.find(s=>s.name.toLowerCase()===b.toLowerCase()||s.code.toLowerCase()===b.toLowerCase());
+  if(!fs||!ts)return toast("Select both stations from the list.");
+  const fc=fromInput.dataset.code||fs.code,tc=toInput.dataset.code||ts.code;
+  $("routeLabel").textContent=fs.name+" → "+ts.name;openPage("trains");
+  const box=$("trainResults");
+  box.innerHTML='<div style="text-align:center;padding:28px"><div style="font-size:28px">🚆</div><div style="margin-top:8px;font-weight:700">Searching live trains...</div><div class="muted" style="margin-top:5px">'+fs.name+' → '+ts.name+'</div></div>';
+  try{
+    let response=await fetch(API_BASE,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({from:fc,to:tc,live:true})});
+    if(!response.ok){
+      response=await fetch(API_BASE+"?from="+encodeURIComponent(fc)+"&to="+encodeURIComponent(tc)+"&live=true",{headers:{"Accept":"application/json"}});
+    }
+    const raw=await response.text();
+    let json;try{json=JSON.parse(raw)}catch(e){throw new Error("Invalid response from proxy")}
+    if(!response.ok)throw new Error(json?.error||json?.message||("HTTP "+response.status));
+    const trains=json?.data?.trains||json?.trains||json?.data||[];
+    if(!Array.isArray(trains)||!trains.length)throw new Error("No trains found");
+    box.innerHTML="";
+    trains.forEach((item,i)=>{
+      const t=item.train||item;
+      const num=t.number||t.trainNumber||item.trainNumber||item.number||"N/A";
+      const name=t.name||item.trainName||item.name||"Train";
+      const dep=item.from?.departure||item.departure||t.departure||t.departureTime||"--:--";
+      const arr=item.to?.arrival||item.arrival||t.arrival||t.arrivalTime||"--:--";
+      const delay=item.live?.delayMinutes??item.delayMinutes??t.delayMinutes??0;
+      const status=Number(delay)>0?(delay+" min late"):"On time";
+      const d=document.createElement("div");d.className="train";
+      d.innerHTML='<div><h3>'+num+' • '+name+'</h3><p>Departure '+dep+' • Arrival '+arr+' • '+tc+'</p><p style="margin-top:6px;color:'+(Number(delay)>0?'#ffb86b':'#78efa0')+'">'+(Number(delay)>0?'⏱ ':'✓ ')+status+'</p></div><span class="livepill">'+(Number(delay)>0?'DELAYED':'LIVE')+'</span>';
+      d.onclick=()=>showRoute(fs.name,ts.name,num);box.appendChild(d);
+    });
+    toast(trains.length+" live train"+(trains.length>1?"s":"")+" found.");
+  }catch(error){
+    console.error("RailRadar proxy error:",error);
+    box.innerHTML='<div style="text-align:center;padding:28px"><div style="font-size:30px">⚠️</div><h3 style="margin-top:8px">Live train data unavailable</h3><p class="muted" style="margin-top:7px">The live railway service could not return data right now.</p><button class="primary" style="margin-top:15px" onclick="searchTrains()">🔄 Try Again</button></div>';
+    toast("Live train service unavailable.");
+  }
+}
 function initMap(){if(mapInstance)return;mapInstance=L.map("map").setView([22.567,88.371],9);L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:"© OpenStreetMap & CARTO"}).addTo(mapInstance)}
-function showRoute(a,b){openPage("map");setTimeout(()=>{initMap();const f=stations.find(s=>s.name.toLowerCase()===a.toLowerCase())||stations[0],t=stations.find(s=>s.name.toLowerCase()===b.toLowerCase())||stations[1],coords={SDAH:[22.567,88.371],STB:[23.245,88.434],RHA:[23.176,88.528],KNJ:[23.401,88.503],NH:[22.894,88.419],BRP:[22.361,88.432],DH:[22.189,88.192]},fc=coords[f.code]||[22.567,88.371],tc=coords[t.code]||[23.245,88.434];L.polyline([fc,tc],{color:"#38bdf8",weight:5,dashArray:"10 8"}).addTo(mapInstance);L.marker(fc).addTo(mapInstance).bindPopup(f.name).openPopup();L.marker(tc).addTo(mapInstance).bindPopup(t.name);mapInstance.fitBounds([fc,tc],{padding:[35,35]})},120)}
+function showRoute(a,b,trainNumber=null){openPage("map");setTimeout(()=>{initMap();const f=stations.find(s=>s.name.toLowerCase()===a.toLowerCase())||stations[0],t=stations.find(s=>s.name.toLowerCase()===b.toLowerCase())||stations[1],coords={SDAH:[22.567,88.371],STB:[23.245,88.434],RHA:[23.176,88.528],KNJ:[23.401,88.503],NH:[22.894,88.419],BRP:[22.361,88.432],DH:[22.189,88.192]},fc=coords[f.code]||[22.567,88.371],tc=coords[t.code]||[23.245,88.434];L.polyline([fc,tc],{color:"#38bdf8",weight:5,dashArray:"10 8"}).addTo(mapInstance);L.marker(fc).addTo(mapInstance).bindPopup(f.name).openPopup();L.marker(tc).addTo(mapInstance).bindPopup(t.name);mapInstance.fitBounds([fc,tc],{padding:[35,35]})},120)}
 function checkPNR(){const p=$("pnrInput").value.trim();if(!/^\d{10}$/.test(p))return toast("Enter a valid 10 digit PNR.");$("pnrResult").innerHTML='<div class="userrow"><div><b>PNR '+p+'</b><div class="muted">Demo interface result. Connect your live PNR API to show real status.</div></div><span class="livepill">API READY</span></div>'}
 function renderTimetable(q){$("ttResults").innerHTML=sampleTrains.filter(t=>t.join(" ").toLowerCase().includes(q.toLowerCase())).map(t=>'<div class="train"><div><h3>'+t[0]+'</h3><p>'+t[3]+' → '+t[4]+' • '+t[2]+'</p></div><span class="livepill">TIMING</span></div>').join("")}
 $("ttSearch").addEventListener("input",e=>renderTimetable(e.target.value));
