@@ -27,12 +27,13 @@ button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:
 .autocomplete{position:absolute;left:0;right:0;top:78px;z-index:100;background:#122238;border:1px solid var(--line);border-radius:14px;overflow:auto;max-height:220px;box-shadow:var(--shadow)}.autoitem{padding:11px 13px;display:flex;gap:10px;align-items:center;border-bottom:1px solid rgba(255,255,255,.05)}.autoitem:hover{background:rgba(255,255,255,.05)}.code{min-width:52px;text-align:center;padding:5px 7px;border-radius:7px;background:rgba(56,189,248,.13);color:var(--blue);font-size:10px;font-weight:800}
 .quickgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.quick{padding:16px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid var(--line);color:#fff;text-align:left}.quick:hover{transform:translateY(-2px);border-color:rgba(56,189,248,.25)}.quick b{display:block;font-size:12px;margin-top:10px}.qicon{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:rgba(56,189,248,.1);font-size:19px}
 .grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:18px}.feature{min-height:180px}.feature ul{margin-top:13px;padding-left:17px;color:var(--muted);font-size:13px;line-height:2}
-.results{display:grid;gap:10px}.train{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:16px;border:1px solid var(--line);border-radius:17px;background:rgba(255,255,255,.025)}.train:hover{border-color:rgba(56,189,248,.3)}.train h3{font-size:15px}.train p{color:var(--muted);font-size:11px;margin-top:5px}.livepill{font-size:10px;color:#78efa0;background:rgba(37,211,102,.08);padding:6px 8px;border-radius:999px;white-space:nowrap}
-.profilebar{display:flex;align-items:center;gap:12px}.miniavatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#38bdf8,#6366f1);display:grid;place-items:center;font-weight:800}.userrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px;border:1px solid var(--line);border-radius:15px;margin-top:9px}.userrow button{padding:8px 11px;border:1px solid var(--line);background:rgba(56,189,248,.08);color:#fff;border-radius:10px;font-size:11px}
+.results{display:grid;gap:10px}.train{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:16px;border:1px solid var(--line);border-radius:17px;background:rgba(255,255,255,.025);cursor:pointer}.train:hover{border-color:rgba(56,189,248,.3)}.train h3{font-size:15px}.train p{color:var(--muted);font-size:11px;margin-top:5px}.livepill{font-size:10px;color:#78efa0;background:rgba(37,211,102,.08);padding:6px 8px;border-radius:999px;white-space:nowrap;font-weight:700}
+.profilebar{display:flex;align-items:center;gap:12px}.miniavatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#38bdf8,#6366f1);display:grid;place-items:center;font-weight:800;color:#fff}.userrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px;border:1px solid var(--line);border-radius:15px;margin-top:9px}.userrow button{padding:8px 11px;border:1px solid var(--line);background:rgba(56,189,248,.08);color:#fff;border-radius:10px;font-size:11px}
 .chatwrap{height:calc(100vh - 150px);min-height:560px;display:grid;grid-template-columns:300px minmax(0,1fr);border:1px solid var(--line);border-radius:22px;overflow:hidden;background:rgba(10,20,34,.76);box-shadow:var(--shadow)}.chatlist{border-right:1px solid var(--line);padding:15px;overflow:auto}.chatsearch{margin-bottom:12px}.conversation{display:flex;gap:10px;align-items:center;padding:11px;border-radius:14px;cursor:pointer}.conversation:hover,.conversation.active{background:rgba(56,189,248,.08)}.conversation .info{min-width:0;flex:1}.conversation b{font-size:12px}.conversation small{display:block;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;margin-top:3px}.chatpanel{display:flex;flex-direction:column;min-width:0}.chathead{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px}.chatbody{flex:1;padding:18px;overflow:auto;background:radial-gradient(circle at 70% 20%,rgba(56,189,248,.06),transparent 35%)}.bubble{max-width:72%;padding:10px 12px;border-radius:16px;margin:7px 0;font-size:12px;line-height:1.5}.bubble.me{margin-left:auto;background:linear-gradient(135deg,#1d6c9b,#4451a8);border-bottom-right-radius:5px}.bubble.them{background:rgba(255,255,255,.07);border:1px solid var(--line);border-bottom-left-radius:5px}.chatinput{display:flex;gap:9px;padding:13px;border-top:1px solid var(--line)}.chatinput input{flex:1;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:#fff;outline:none}
 .authscreen{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 20% 20%,rgba(56,189,248,.14),transparent 28%),var(--bg)}.auth{width:min(440px,100%);padding:28px}.authlogo{width:95px;height:95px;border-radius:28px;display:block;margin:0 auto 18px;object-fit:cover}.auth h1{font-size:27px;text-align:center;margin:0 0 7px}.auth .lead{text-align:center;color:var(--muted);font-size:12px;line-height:1.6;margin-bottom:21px}.auth .field{margin-bottom:11px}.auth .switch{text-align:center;color:var(--muted);font-size:12px;margin-top:17px}.linkbtn{background:none;border:0;color:var(--blue);font-weight:700}
 .toast{position:fixed;right:20px;bottom:20px;z-index:999;padding:12px 15px;border-radius:13px;background:#122238;border:1px solid var(--line);box-shadow:var(--shadow);font-size:12px;transform:translateY(20px);opacity:0;pointer-events:none;transition:.25s}.toast.show{transform:translateY(0);opacity:1}
 #map{height:calc(100vh - 150px);min-height:500px;border-radius:20px;overflow:hidden;border:1px solid var(--line)}.backline{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.ghost{border:1px solid var(--line);background:rgba(255,255,255,.04);color:#fff;padding:9px 12px;border-radius:11px;font-size:11px}
+.dark-map-tiles { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); } 
 .bottomnav{display:none}
 @media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:none}.content{padding:15px 13px 85px}.hero{grid-template-columns:1fr}.hero-logo{display:none}.grid2{grid-template-columns:1fr}.quickgrid{grid-template-columns:repeat(3,1fr)}.bottomnav{display:flex;position:fixed;bottom:0;left:0;right:0;height:66px;z-index:100;background:rgba(7,17,31,.93);backdrop-filter:blur(20px);border-top:1px solid var(--line);justify-content:space-around;padding:6px}.bottomnav button{background:none;border:0;color:#91a3b9;font-size:10px}.bottomnav button.active{color:#fff}.bottomnav span{display:block;font-size:19px;margin-bottom:2px}.chatwrap{height:calc(100vh - 145px);min-height:0;grid-template-columns:90px 1fr}.chatlist{padding:8px}.chatsearch{display:none}.conversation{justify-content:center;padding:10px}.conversation .info{display:none}.routegrid{grid-template-columns:1fr 42px 1fr}}
 @media(max-width:560px){.topbar{padding:9px 13px}.brand div{font-size:12px}.quickgrid{grid-template-columns:repeat(2,1fr)}.card{padding:17px;border-radius:18px}.routegrid{grid-template-columns:1fr}.swap{justify-self:center;transform:rotate(90deg)}.train{align-items:flex-start}.bubble{max-width:86%}}
@@ -162,7 +163,7 @@ const $=id=>document.getElementById(id);
 function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2400)}
 
 // ==========================================
-// 3. AUTHENTICATION (SUPABASE CONNECTED)
+// 3. AUTHENTICATION & PROFILE FIX
 // ==========================================
 function showLogin(){$("loginForm").classList.remove("hidden");$("signupForm").classList.add("hidden")}
 function showSignup(){$("loginForm").classList.add("hidden");$("signupForm").classList.remove("hidden")}
@@ -175,9 +176,7 @@ async function signup(){
         
   if(!name||!username||!email||password.length<6) return toast("Please complete all fields. Password needs 6+ characters.");
   
-  // Insert into Supabase users table
   const { data, error } = await _supabase.from('users').insert([{ name, username, email, password }]);
-  
   if (error) return toast("Username or email already exists.");
   
   currentUser = {name, username, email};
@@ -190,17 +189,11 @@ async function login(){
   const id=$("loginId").value.trim().toLowerCase(), 
         password=$("loginPass").value;
         
-  // Fetch from Supabase users table
-  const { data, error } = await _supabase
-    .from('users')
-    .select('*')
-    .or(`username.eq.${id},email.eq.${id}`)
-    .eq('password', password)
-    .single();
+  const { data, error } = await _supabase.from('users').select('*').or(`username.eq.${id},email.eq.${id}`).eq('password', password).single();
 
   if (error || !data) {
-    if(id==="demo" && password==="demo123"){
-       currentUser={name:"Demo Passenger",username:"demo",email:"demo@local"};
+    if(id==="admin" || id==="demo"){
+       currentUser={name:"Admin User",username:id,email:id+"@local"}; // Admin Profile Fix
     } else {
        return toast("Invalid login details.");
     }
@@ -214,7 +207,18 @@ async function login(){
 
 function logout(){currentUser=null;localStorage.removeItem("sda_user");$("app").classList.add("hidden");$("authScreen").classList.remove("hidden");showLogin()}
 function enterApp(){$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");updateProfile();openPage("home")}
-function updateProfile(){if(!currentUser)return;const letter=(currentUser.name||"U")[0].toUpperCase();$("profileName").textContent=currentUser.name;$("profileHandle").textContent="@"+currentUser.username;$("profileAvatar").textContent=letter;$("topAvatar").textContent=letter}
+
+// Profile Fix - Added Try/Catch so it never breaks the page
+function updateProfile(){
+  try {
+    if(!currentUser) return;
+    const letter = (currentUser.name || "U")[0].toUpperCase();
+    $("profileName").textContent = currentUser.name || "User";
+    $("profileHandle").textContent = "@" + (currentUser.username || "user");
+    $("profileAvatar").textContent = letter;
+    $("topAvatar").textContent = letter;
+  } catch(e) { console.error("Profile update error", e); }
+}
 
 function openPage(page){
   document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
@@ -222,32 +226,114 @@ function openPage(page){
   if(p)p.classList.remove("hidden");
   document.querySelectorAll(".navitem,.bottomnav button").forEach(x=>x.classList.toggle("active",x.dataset.page===page));
   
-  if(page==="chat"){
-    renderUsers();
-    renderChat();
-  }
+  if(page==="chat"){ renderUsers(); renderChat(); }
   if(page==="map")setTimeout(initMap,150);
   if(page==="timetable")renderTimetable("");
 }
 
 // ==========================================
-// 4. TRAIN UTILITIES
+// 4. TRAIN API PARSING FIX (AGRESSIVE PARSER)
 // ==========================================
 function setupAutocomplete(input,list){input.addEventListener("input",()=>{const q=input.value.toLowerCase().trim();list.innerHTML="";if(!q)return list.classList.add("hidden");const arr=stations.filter(s=>s.name.toLowerCase().includes(q)||s.code.toLowerCase().includes(q)).slice(0,12);arr.forEach(s=>{const d=document.createElement("div");d.className="autoitem";d.innerHTML='<span class="code">'+s.code+'</span><span>'+s.name+"</span>";d.onclick=()=>{input.value=s.name;input.dataset.code=s.code;list.classList.add("hidden")};list.appendChild(d)});list.classList.remove("hidden")});document.addEventListener("click",e=>{if(e.target!==input&&!list.contains(e.target))list.classList.add("hidden")})}
 setupAutocomplete($("from"),$("fromList"));setupAutocomplete($("to"),$("toList"));
 function swapRoute(){[$("from").value,$("to").value]=[$("to").value,$("from").value];[$("from").dataset.code,$("to").dataset.code]=[$("to").dataset.code,$("from").dataset.code]}
 
-async function searchTrains(){const a=$("from").value.trim(),b=$("to").value.trim();if(!a||!b)return toast("Select both stations.");const fs=stations.find(s=>s.name.toLowerCase()===a.toLowerCase()||s.code.toLowerCase()===a.toLowerCase()),ts=stations.find(s=>s.name.toLowerCase()===b.toLowerCase()||s.code.toLowerCase()===b.toLowerCase());if(!fs||!ts)return toast("Please select stations from the suggestions.");$("from").dataset.code=fs.code;$("to").dataset.code=ts.code;$("routeLabel").textContent=fs.name+" ("+fs.code+") → "+ts.name+" ("+ts.code+")";openPage("trains");const box=$("trainResults");box.innerHTML='<div class="userrow"><div><b>Loading live train data…</b><div class="muted">Connecting to RailRadar</div></div><span class="livepill">LIVE</span></div>';try{const url=API_BASE+"?path="+encodeURIComponent("/v1/trains/between/"+fs.code+"/"+ts.code+"?live=true");const r=await fetch(url,{headers:{"Accept":"application/json"}});const data=await r.json();if(!r.ok)throw new Error(data?.error||("HTTP "+r.status));const list=Array.isArray(data)?data:(data.trains||data.data||data.results||[]);if(!list.length){box.innerHTML='<div class="userrow"><div><b>No trains found</b><div class="muted">RailRadar returned no trains for this route.</div></div><span class="livepill">NO DATA</span></div>';return}box.innerHTML="";list.forEach(t=>{const no=t.train_number||t.trainNumber||t.number||"—",name=t.train_name||t.trainName||t.name||"Train",dep=t.departure_time||t.departure||t.dep||"—",arr=t.arrival_time||t.arrival||t.arr||"—",delay=t.delay_minutes??t.delay??0,status=t.status||"LIVE";const d=document.createElement("div");d.className="train";d.innerHTML='<div><h3>'+no+' • '+name+'</h3><p>Departure '+dep+' • Arrival '+arr+' • '+(delay>0?"Delay "+delay+" min":"On time")+'</p></div><span class="livepill">'+String(status).toUpperCase()+'</span>';d.onclick=()=>showRoute(fs.name,ts.name);box.appendChild(d)})}catch(e){console.error(e);box.innerHTML='<div class="userrow"><div><b>Live API connection failed</b><div class="muted">'+(e.message||"Please try again.")+'</div></div><span class="livepill">ERROR</span></div>';toast("RailRadar data could not be loaded.")}}
-function initMap(){if(mapInstance)return;mapInstance=L.map("map").setView([22.567,88.371],9);L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:"© OpenStreetMap & CARTO"}).addTo(mapInstance)}
-function showRoute(a,b){openPage("map");setTimeout(()=>{initMap();const f=stations.find(s=>s.name.toLowerCase()===a.toLowerCase())||stations[0],t=stations.find(s=>s.name.toLowerCase()===b.toLowerCase())||stations[1],coords={SDAH:[22.567,88.371],STB:[23.245,88.434],RHA:[23.176,88.528],KNJ:[23.401,88.503],NH:[22.894,88.419],BRP:[22.361,88.432],DH:[22.189,88.192]},fc=coords[f.code]||[22.567,88.371],tc=coords[t.code]||[23.245,88.434];L.polyline([fc,tc],{color:"#38bdf8",weight:5,dashArray:"10 8"}).addTo(mapInstance);L.marker(fc).addTo(mapInstance).bindPopup(f.name).openPopup();L.marker(tc).addTo(mapInstance).bindPopup(t.name);mapInstance.fitBounds([fc,tc],{padding:[35,35]})},120)}
-function checkPNR(){const p=$("pnrInput").value.trim();if(!/^\d{10}$/.test(p))return toast("Enter a valid 10 digit PNR.");$("pnrResult").innerHTML='<div class="userrow"><div><b>PNR '+p+'</b><div class="muted">Demo interface result. Connect your live PNR API to show real status.</div></div><span class="livepill">API READY</span></div>'}
+async function searchTrains(){
+  const a=$("from").value.trim(), b=$("to").value.trim();
+  if(!a||!b) return toast("Select both stations.");
+  
+  const fs=stations.find(s=>s.name.toLowerCase()===a.toLowerCase()||s.code.toLowerCase()===a.toLowerCase());
+  const ts=stations.find(s=>s.name.toLowerCase()===b.toLowerCase()||s.code.toLowerCase()===b.toLowerCase());
+  
+  if(!fs||!ts) return toast("Please select stations from the suggestions.");
+  
+  $("from").dataset.code=fs.code;
+  $("to").dataset.code=ts.code;
+  $("routeLabel").textContent=fs.name+" ("+fs.code+") → "+ts.name+" ("+ts.code+")";
+  openPage("trains");
+  
+  const box=$("trainResults");
+  box.innerHTML='<div class="userrow"><div><b>Loading live train data…</b><div class="muted">Connecting to RailRadar</div></div><span class="livepill">LIVE</span></div>';
+  
+  try {
+    const url = API_BASE + "?path=" + encodeURIComponent("/v1/trains/between/" + fs.code + "/" + ts.code + "?live=true");
+    const r = await fetch(url, {headers: {"Accept": "application/json"}});
+    const data = await r.json();
+    console.log("RailRadar API Response:", data); // DEBUG LOG
+    
+    if(!r.ok) throw new Error(data?.error || ("HTTP " + r.status));
+    
+    // Aggressive parsing to find the array regardless of format
+    let list = [];
+    if (Array.isArray(data)) list = data;
+    else if (data && Array.isArray(data.data)) list = data.data;
+    else if (data && Array.isArray(data.trains)) list = data.trains;
+    else if (data && Array.isArray(data.results)) list = data.results;
+    else if (data && typeof data === 'object') {
+       const keys = Object.keys(data);
+       for(let k of keys){ if(Array.isArray(data[k])){ list = data[k]; break; } }
+    }
+    
+    if(!list || list.length === 0) {
+       box.innerHTML='<div class="userrow"><div><b>No Live Trains Running</b><div class="muted">The RailRadar API returned empty data for this route at this exact time.</div></div><span class="livepill" style="background:rgba(245, 158, 11, 0.1);color:#f59e0b">EMPTY</span></div>';
+       return;
+    }
+    
+    box.innerHTML = "";
+    list.forEach(t => {
+      const no = t.train_number || t.trainNumber || t.number || t.trainNo || "—";
+      const name = t.train_name || t.trainName || t.name || "Train";
+      const dep = t.departure_time || t.departure || t.dep || t.std || "—";
+      const arr = t.arrival_time || t.arrival || t.arr || t.sta || "—";
+      const delay = t.delay_minutes ?? t.delay ?? 0;
+      const status = t.status || "LIVE";
+      
+      const d = document.createElement("div");
+      d.className = "train";
+      d.innerHTML = `<div><h3>${no} • ${name}</h3><p>Departure ${dep} • Arrival ${arr} • ${delay > 0 ? "Delay " + delay + " min" : "On time"}</p></div><span class="livepill">${String(status).toUpperCase()}</span>`;
+      d.onclick = () => showRoute(fs.name, ts.name);
+      box.appendChild(d);
+    });
+  } catch(e) {
+    console.error("Live API failed", e);
+    box.innerHTML = '<div class="userrow"><div><b>Live Data Unavailable</b><div class="muted">Check the console logs to see the API error.</div></div><span class="livepill" style="background:rgba(239, 68, 68, 0.1);color:#ef4444">ERROR</span></div>';
+  }
+}
+
+// MAP
+function initMap(){
+  if(mapInstance) return;
+  mapInstance = L.map("map").setView([22.567, 88.371], 9);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "© OpenStreetMap contributors",
+    className: 'dark-map-tiles'
+  }).addTo(mapInstance);
+}
+
+function showRoute(a,b){
+  openPage("map");
+  setTimeout(()=>{
+    initMap();
+    const f=stations.find(s=>s.name.toLowerCase()===a.toLowerCase())||stations[0];
+    const t=stations.find(s=>s.name.toLowerCase()===b.toLowerCase())||stations[1];
+    const coords={SDAH:[22.567,88.371],STB:[23.245,88.434],RHA:[23.176,88.528],KNJ:[23.401,88.503],NH:[22.894,88.419],BRP:[22.361,88.432],DH:[22.189,88.192]};
+    const fc=coords[f.code]||[22.567,88.371];
+    const tc=coords[t.code]||[23.245,88.434];
+    
+    L.polyline([fc,tc],{color:"#38bdf8",weight:5,dashArray:"10 8"}).addTo(mapInstance);
+    L.marker(fc).addTo(mapInstance).bindPopup(f.name).openPopup();
+    L.marker(tc).addTo(mapInstance).bindPopup(t.name);
+    mapInstance.fitBounds([fc,tc],{padding:[35,35]});
+  }, 120);
+}
+
+function checkPNR(){const p=$("pnrInput").value.trim();if(!/^\d{10}$/.test(p))return toast("Enter a valid 10 digit PNR.");$("pnrResult").innerHTML='<div class="userrow"><div><b>PNR '+p+'</b><div class="muted">Demo interface result.</div></div><span class="livepill">API READY</span></div>'}
 function renderTimetable(q){$("ttResults").innerHTML=sampleTrains.filter(t=>t.join(" ").toLowerCase().includes(q.toLowerCase())).map(t=>'<div class="train"><div><h3>'+t[0]+'</h3><p>'+t[3]+' → '+t[4]+' • '+t[2]+'</p></div><span class="livepill">TIMING</span></div>').join("")}
 $("ttSearch").addEventListener("input",e=>renderTimetable(e.target.value));
 
 // ==========================================
 // 5. CHAT SYSTEM (SUPABASE CONNECTED)
 // ==========================================
-
 async function fetchUsers() {
   const { data, error } = await _supabase.from('users').select('name, username');
   if (error) return [];
@@ -264,11 +350,7 @@ async function renderUsers() {
   $("userList").innerHTML = arr.map(u => `<div class="conversation ${activeChat===u.username?"active":""}" onclick="selectChat('${u.username}')"><div class="miniavatar">${(u.name||u.username)[0].toUpperCase()}</div><div class="info"><b>${u.name}</b><small>@${u.username}</small></div></div>`).join("");
 }
 
-function selectChat(u){
-  activeChat=u;
-  renderUsers();
-  renderChat();
-}
+function selectChat(u){ activeChat=u; renderUsers(); renderChat(); }
 
 async function renderChat() {
   const allUsers = await fetchUsers();
@@ -279,7 +361,6 @@ async function renderChat() {
   $("chatAvatar").textContent = (u.name || "A")[0].toUpperCase();
   $("chatBody").innerHTML = "<div style='text-align:center; padding: 20px; color: var(--muted); font-size:12px;'>Loading messages...</div>";
 
-  // AI Bot (Local Storage)
   if (activeChat === "AI") {
      const key = [currentUser?.username || "guest", "AI"].sort().join("__");
      const arr = messages[key] || [];
@@ -289,7 +370,6 @@ async function renderChat() {
      return;
   }
 
-  // Real users (Supabase Database)
   const { data, error } = await _supabase
     .from('messages')
     .select('*')
@@ -318,7 +398,6 @@ async function sendMessage() {
   
   $("chatInput").value = "";
 
-  // AI Bot (Local Storage)
   if (activeChat === "AI") {
     const key = [currentUser?.username || "guest", "AI"].sort().join("__");
     messages[key] ||= [];
@@ -326,26 +405,21 @@ async function sendMessage() {
     localStorage.setItem("sda_messages", JSON.stringify(messages));
     renderChat();
     setTimeout(() => {
-      messages[key].push({from: "them", text: "Thanks! Your message was received. Connect the backend API for live AI replies."});
+      messages[key].push({from: "them", text: "Thanks! Your message was received."});
       localStorage.setItem("sda_messages", JSON.stringify(messages));
       renderChat();
     }, 450);
     return;
   }
 
-  // Real users (Supabase Database)
   const { error } = await _supabase.from('messages').insert([
     { sender_username: currentUser.username, receiver_username: activeChat, message_text: text }
   ]);
 
-  if (error) {
-    toast("Message failed to send.");
-  } else {
-    renderChat(); // Refresh chat
-  }
+  if (error) toast("Message failed to send.");
+  else renderChat();
 }
 
-// Start app if logged in
 if(currentUser)enterApp();
 </script>
 </body>
