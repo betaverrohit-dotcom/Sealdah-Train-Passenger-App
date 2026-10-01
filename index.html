@@ -3,1435 +3,591 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
-    <title>Sealdah Train Passenger App</title>
-
-    <meta name="theme-color" content="#1963a6">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
+    <title>Where is My Train - Clone</title>
+    
+    <!-- PWA Manifest -->
     <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#1963a6">
     <link rel="apple-touch-icon" href="/icon-192.png">
 
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-
-    <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                         Roboto, Arial, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
+        body { background-color: #f2f4f5; color: #333; }
+        
+        /* App Header */
+        .header { background-color: #1963a6; color: white; padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; font-size: 1.2rem; font-weight: 500; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .header-icon { cursor: pointer; font-size: 1.5rem; }
+        
+        /* Tabs */
+        .tabs { background-color: #1963a6; display: flex; justify-content: space-around; padding: 0 10px 10px 10px; color: white; font-weight: 500; font-size: 0.95rem; }
+        .tab { padding: 8px 16px; border-radius: 20px; cursor: pointer; opacity: 0.8; }
+        .tab.active { background-color: white; color: #1963a6; opacity: 1; }
 
-        body {
-            background: #f2f4f5;
-            color: #333;
-        }
+        /* Main Container */
+        .container { padding: 15px; max-width: 600px; margin: 0 auto; }
 
-        .header {
-            background: #1963a6;
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 1.2rem;
-            font-weight: 500;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0,0,0,.1);
-        }
+        /* Search Card */
+        .search-card { background: white; border-radius: 8px; padding: 10px 15px 15px 15px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); position: relative; margin-bottom: 15px; }
+        .input-row { display: flex; align-items: center; position: relative; border-bottom: 1px solid #e0e0e0; }
+        .input-row:last-of-type { border-bottom: none; margin-bottom: 10px; }
+        .input-row input { flex: 1; padding: 18px 10px 18px 40px; border: none; font-size: 1rem; outline: none; background: transparent; color: #333; }
+        .input-icon { position: absolute; left: 5px; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; }
+        
+        .swap-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: white; border: 1px solid #ddd; border-radius: 50%; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; color: #1e8738; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
+        /* Autocomplete Dropdown */
+        .autocomplete-items { position: absolute; z-index: 99; top: 100%; left: 0; right: 0; background-color: #fff; max-height: 250px; overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.2); border-radius: 0 0 8px 8px; display: none; }
+        .autocomplete-item { padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; font-size: 0.95rem; }
+        .autocomplete-item:hover { background-color: #f9f9f9; }
+        .station-code-badge { background-color: #1963a6; color: white; padding: 4px 6px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-right: 12px; min-width: 50px; text-align: center; }
 
-        .header-icon {
-            cursor: pointer;
-            font-size: 1.5rem;
-        }
+        /* Buttons */
+        .btn-find { width: 100%; background-color: #1e8738; color: white; padding: 15px; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: 500; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn-find:active { background-color: #166a2a; }
 
-        .tabs {
-            background: #1963a6;
-            display: flex;
-            justify-content: space-around;
-            padding: 0 10px 10px;
-            color: white;
-            font-weight: 500;
-            font-size: .95rem;
-        }
+        /* Extra Cards (Visual mockups) */
+        .extra-card { background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-size: 1rem; color: #333; border: 1px solid #f0f0f0; }
+        
+        /* Screens */
+        #screen-search { display: block; }
+        #screen-trains { display: none; }
+        #screen-map { display: none; }
 
-        .tab {
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            opacity: .8;
-        }
+        /* Train List UI */
+        .train-card { background: white; padding: 15px; border-radius: 8px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer; border-left: 5px solid #1e8738; display: flex; justify-content: space-between; align-items: center; }
+        .train-card:hover { background-color: #f5f9f6; }
+        .train-details h4 { color: #1963a6; margin-bottom: 5px; font-size: 1.1rem; }
+        .train-details p { font-size: 0.9rem; color: #666; }
+        .view-map-icon { color: #1e8738; font-size: 1.5rem; }
 
-        .tab.active {
-            background: white;
-            color: #1963a6;
-            opacity: 1;
-        }
-
-        .container {
-            padding: 15px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .search-card {
-            background: white;
-            border-radius: 8px;
-            padding: 10px 15px 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,.1);
-            position: relative;
-            margin-bottom: 15px;
-        }
-
-        .input-row {
-            display: flex;
-            align-items: center;
-            position: relative;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .input-row:last-of-type {
-            border-bottom: none;
-            margin-bottom: 10px;
-        }
-
-        .input-row input {
-            flex: 1;
-            padding: 18px 10px 18px 40px;
-            border: none;
-            font-size: 1rem;
-            outline: none;
-            background: transparent;
-            color: #333;
-        }
-
-        .input-row input:disabled {
-            opacity: .6;
-        }
-
-        .input-icon {
-            position: absolute;
-            left: 5px;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .swap-btn {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            color: #1e8738;
-            box-shadow: 0 1px 3px rgba(0,0,0,.1);
-        }
-
-        .autocomplete-items {
-            position: absolute;
-            z-index: 99;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: #fff;
-            max-height: 250px;
-            overflow-y: auto;
-            box-shadow: 0 4px 6px rgba(0,0,0,.2);
-            border-radius: 0 0 8px 8px;
-            display: none;
-        }
-
-        .autocomplete-item {
-            padding: 12px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            align-items: center;
-            font-size: .95rem;
-        }
-
-        .autocomplete-item:hover {
-            background: #f9f9f9;
-        }
-
-        .station-code-badge {
-            background: #1963a6;
-            color: white;
-            padding: 4px 6px;
-            border-radius: 4px;
-            font-size: .8rem;
-            font-weight: bold;
-            margin-right: 12px;
-            min-width: 50px;
-            text-align: center;
-        }
-
-        .btn-find {
-            width: 100%;
-            background: #1e8738;
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 500;
-            cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,.1);
-        }
-
-        .btn-find:disabled {
-            background: #999;
-            cursor: not-allowed;
-        }
-
-        .extra-card {
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 1px 3px rgba(0,0,0,.1);
-            font-size: 1rem;
-            color: #333;
-            border: 1px solid #f0f0f0;
-        }
-
-        #screen-search {
-            display: block;
-        }
-
-        #screen-trains,
-        #screen-map {
-            display: none;
-        }
-
-        .train-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,.1);
-            cursor: pointer;
-            border-left: 5px solid #1e8738;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .train-card:hover {
-            background: #f5f9f6;
-        }
-
-        .train-details h4 {
-            color: #1963a6;
-            margin-bottom: 5px;
-            font-size: 1.1rem;
-        }
-
-        .train-details p {
-            font-size: .9rem;
-            color: #666;
-        }
-
-        .view-map-icon {
-            color: #1e8738;
-            font-size: 1.5rem;
-        }
-
-        #map-container {
-            height: calc(100vh - 140px);
-            width: 100%;
-            border-radius: 8px;
-            z-index: 1;
-        }
-
-        .map-status-bar {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,.1);
-            font-weight: 500;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .back-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .loading-box {
-            background: white;
-            padding: 18px;
-            border-radius: 8px;
-            text-align: center;
-            color: #1963a6;
-            margin-bottom: 15px;
-            box-shadow: 0 1px 3px rgba(0,0,0,.1);
-        }
-
-        .status-text {
-            font-size: .85rem;
-            text-align: center;
-            margin: 8px 0 12px;
-            color: #666;
-        }
-
-        .error-box {
-            background: #fff0f0;
-            border: 1px solid #ffcaca;
-            color: #b00020;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            font-size: .9rem;
-            display: none;
-        }
+        /* Map UI */
+        #map-container { height: calc(100vh - 140px); width: 100%; border-radius: 8px; z-index: 1; }
+        .map-status-bar { background: white; padding: 15px; border-radius: 8px; margin-top: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); font-weight: 500; display: flex; justify-content: space-between; }
+        
+        .back-btn { background: none; border: none; color: white; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+        .mini-btn { background:#eef5ff; color:#1963a6; border:1px solid #c9dff2; border-radius:18px; padding:7px 11px; font-size:.78rem; cursor:pointer; }
+        .mini-btn:active { transform:scale(.98); }
     </style>
 </head>
-
 <body>
 
-<!-- HEADER -->
-<div class="header" id="app-header">
-    <div class="header-left">
-        <span class="header-icon">☰</span>
-        <span>Sealdah Train Service</span>
+    <!-- App Header -->
+    <div class="header" id="app-header">
+        <div class="header-left">
+            <span class="header-icon">☰</span> 
+            <span>Where is My Train</span>
+        </div>
+        <span class="header-icon">🎤</span>
     </div>
-    <span class="header-icon">🎤</span>
-</div>
 
-<div class="container">
+    <!-- MAIN CONTAINER -->
+    <div class="container">
+        
+        <!-- ================= SCREEN 1: SEARCH ================= -->
+        <div id="screen-search">
+            <!-- Tabs -->
+            <div class="tabs" style="margin: -15px -15px 15px -15px; padding-top: 10px; border-radius: 0 0 15px 15px;">
+                <div class="tab">Express</div>
+                <div class="tab">Metro</div>
+                <div class="tab active">Locals</div>
+            </div>
 
-    <!-- SEARCH SCREEN -->
-    <div id="screen-search">
+            <!-- Search Area -->
+            <div class="search-card">
+                <div class="input-row">
+                    <span class="input-icon">◎</span>
+                    <input type="text" id="from-station" placeholder="From Station" autocomplete="off">
+                    <div id="from-autocomplete-list" class="autocomplete-items"></div>
+                </div>
+                
+                <div class="swap-btn" onclick="swapStations()">⇅</div>
 
-        <div class="tabs"
-             style="margin:-15px -15px 15px -15px;
-                    padding-top:10px;
-                    border-radius:0 0 15px 15px;">
+                <div class="input-row">
+                    <span class="input-icon" style="color: #1963a6;">◉</span>
+                    <input type="text" id="to-station" placeholder="To Station" autocomplete="off">
+                    <div id="to-autocomplete-list" class="autocomplete-items"></div>
+                </div>
 
-            <div class="tab">Express</div>
-            <div class="tab">Metro</div>
-            <div class="tab active">Locals</div>
+                <button class="btn-find" onclick="findTrains()">Find trains</button>
+            </div>
 
+            <div class="extra-card" onclick="showStationBoard()" style="cursor:pointer;">
+                <span style="color: #1963a6; font-weight: bold; font-size:1.2rem; margin-right:10px;">((•))</span> 
+                <span style="flex:1;"><strong>Station departure board</strong><br><small style="color:#777;">Live trains from any station</small></span>
+                <span style="color: #1e8738; font-size:1.2rem;">🔍</span>
+            </div>
+
+            <div class="extra-card" onclick="showLocalTrains()" style="cursor:pointer;">
+                <span style="font-size:1.5rem; margin-right:10px;">🚆</span>
+                <span style="flex:1;"><strong>Kolkata Local Trains</strong><br><small style="color:#777;">Live local train list</small></span>
+                <span>›</span>
+            </div>
+
+            <div class="extra-card" style="background:#eef5ff; border:none; display:block;">
+                <strong>Quick tools</strong>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+                    <button class="mini-btn" onclick="showStationLive('SDAH')">📡 Sealdah Live</button>
+                    <button class="mini-btn" onclick="showFilteredTrains('local','')">🔎 Local Filter</button>
+                </div>
+            </div>
         </div>
 
-        <div id="loading-box" class="loading-box">
-            🚆 Loading station database...
+        <!-- ================= SCREEN 2: TRAIN LIST ================= -->
+        <div id="screen-trains">
+            <div style="background: white; padding: 15px; border-radius: 8px; margin-bottom:15px; font-weight:bold; color:#333; text-align:center; box-shadow: 0 1px 3px rgba(0,0,0,0.1);" id="route-title">
+                Route Details
+            </div>
+            <div id="train-results"></div>
         </div>
 
-        <div id="error-box" class="error-box"></div>
-
-        <div class="search-card">
-
-            <div class="input-row">
-
-                <span class="input-icon">◎</span>
-
-                <input
-                    type="text"
-                    id="from-station"
-                    placeholder="From Station"
-                    autocomplete="off"
-                    disabled
-                >
-
-                <div id="from-autocomplete-list"
-                     class="autocomplete-items"></div>
-
+        <!-- ================= SCREEN 3: MAP VIEW ================= -->
+        <div id="screen-map">
+            <div class="map-status-bar">
+                <div id="map-train-title" style="color:#1963a6; font-weight:bold;">Train Live Map</div>
+                <div style="color:#1e8738;">🟢 On Time</div>
             </div>
-
-            <div class="swap-btn" onclick="swapStations()">
-                ⇅
-            </div>
-
-            <div class="input-row">
-
-                <span class="input-icon" style="color:#1963a6;">
-                    ◉
-                </span>
-
-                <input
-                    type="text"
-                    id="to-station"
-                    placeholder="To Station"
-                    autocomplete="off"
-                    disabled
-                >
-
-                <div id="to-autocomplete-list"
-                     class="autocomplete-items"></div>
-
-            </div>
-
-            <button
-                id="find-button"
-                class="btn-find"
-                onclick="findTrains()"
-                disabled
-            >
-                Find trains
-            </button>
-
-        </div>
-
-        <div class="extra-card">
-
-            <span style="
-                color:#1963a6;
-                font-weight:bold;
-                font-size:1.2rem;
-                margin-right:10px;">
-                ((•))
-            </span>
-
-            <span style="flex:1;">
-                Station departure board
-            </span>
-
-            <span style="
-                color:#1e8738;
-                font-size:1.2rem;">
-                🔍
-            </span>
-
-        </div>
-
-        <div class="extra-card"
-             style="background:#eef5ff;border:none;">
-
-            <div>
-                <strong>Explore Sealdah Railway</strong>
-                <br>
-                <small style="color:#555;">
-                    Eastern Railway Passenger Service
-                </small>
-            </div>
-
-            <div style="font-size:2rem;">
-                🗺️
-            </div>
-
+            <div id="map-container"></div>
         </div>
 
     </div>
 
-
-    <!-- TRAIN SCREEN -->
-    <div id="screen-trains">
-
-        <div
-            style="
-                background:white;
-                padding:15px;
-                border-radius:8px;
-                margin-bottom:15px;
-                font-weight:bold;
-                color:#333;
-                text-align:center;
-                box-shadow:0 1px 3px rgba(0,0,0,.1);
-            "
-            id="route-title">
-
-            Route Details
-
-        </div>
-
-        <div id="train-results"></div>
-
-    </div>
-
-
-    <!-- MAP SCREEN -->
-    <div id="screen-map">
-
-        <div class="map-status-bar">
-
-            <div
-                id="map-train-title"
-                style="color:#1963a6;font-weight:bold;">
-                Train Live Map
-            </div>
-
-            <div style="color:#1e8738;">
-                🟢 On Time
-            </div>
-
-        </div>
-
-        <div id="map-container"></div>
-
-    </div>
-
-</div>
-
-
-<!-- LEAFLET -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-
-<script>
-
-/* =========================================================
-   SUPABASE CONFIGURATION
-   ========================================================= */
-
-const SUPABASE_URL =
-    "https://wtvrbfqezpmxutnwjdsp.supabase.co";
-
-
-/*
-   IMPORTANT:
-   এখানে তোমার Supabase Publishable Key বসাও।
-*/
-
-const SUPABASE_PUBLISHABLE_KEY =
-    "sb_publishable_oFOo4DYfj1DU-tr_3n6kjA_ChfRYrqG";
-
-
-const supabaseClient =
-    window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_PUBLISHABLE_KEY
-    );
-
-
-/* =========================================================
-   GLOBAL DATABASE
-   ========================================================= */
-
-let stationDatabase = [];
-
-
-/* =========================================================
-   REAL COORDINATES FOR MAJOR STATIONS
-   ========================================================= */
-
-const realCoords = {
-
-    SDAH: [22.567, 88.371],
-
-    BNXR: [22.583, 88.390],
-
-    DDJ: [22.622, 88.393],
-
-    NH: [22.894, 88.419],
-
-    RHA: [23.176, 88.528],
-
-    STB: [23.245, 88.434],
-
-    KNJ: [23.401, 88.503],
-
-    BNJ: [23.045, 88.825],
-
-    BRP: [22.361, 88.432],
-
-    DH: [22.189, 88.192]
-
-};
-
-
-/* =========================================================
-   LOAD STATIONS FROM SUPABASE
-   ========================================================= */
-
-async function loadStations() {
-
-    const loadingBox =
-        document.getElementById("loading-box");
-
-    const errorBox =
-        document.getElementById("error-box");
-
-    try {
-
-        loadingBox.style.display = "block";
-
-        errorBox.style.display = "none";
-
-        const {
-            data,
-            error
-        } = await supabaseClient
-
-            .from("stations")
-
-            .select(
-                "station_code, station_name, line, zone, active"
-            )
-
-            .eq("active", true)
-
-            .order("station_name");
-
-
-        if (error) {
-            throw error;
-        }
-
-
-        if (!data || data.length === 0) {
-
-            throw new Error(
-                "No active stations found in Supabase."
-            );
-
-        }
-
-
-        stationDatabase = data.map((station, index) => {
-
-            let lat =
-                22.567 +
-                (Math.random() - 0.5) * 1.5;
-
-            let lng =
-                88.371 +
-                (Math.random() - 0.5) * 1.5;
-
-
-            if (realCoords[station.station_code]) {
-
-                lat =
-                    realCoords[station.station_code][0];
-
-                lng =
-                    realCoords[station.station_code][1];
-
-            }
-
-
-            return {
-
-                name: station.station_name,
-
-                code: station.station_code,
-
-                line: station.line || "",
-
-                zone: station.zone || "Eastern Railway",
-
-                active: station.active,
-
-                lat: lat,
-
-                lng: lng
-
-            };
-
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // ================= MASSIVE STATION DATABASE =================
+        // User provided dataset compiled into searchable JSON
+        const rawStations = [
+            // Main / Sealdah -> Naihati -> Ranaghat
+            {c:'SDAH', n:'Sealdah'}, {c:'BNXR', n:'Bidhannagar Road'}, {c:'DDJ', n:'Dum Dum Jn'}, {c:'BLH', n:'Belgharia'}, {c:'AGP', n:'Agarpara'}, {c:'SEP', n:'Sodepur'}, {c:'KDH', n:'Khardah'}, {c:'TGH', n:'Titagarh'}, {c:'BP', n:'Barrackpur'}, {c:'PT', n:'Palta'}, {c:'IP', n:'Ichhapur'}, {c:'SNR', n:'Shyamnagar'}, {c:'JGDL', n:'Jagaddal'}, {c:'KNR', n:'Kankinara'}, {c:'NH', n:'Naihati'}, {c:'HLR', n:'Halisahar'}, {c:'KPA', n:'Kanchrapara'}, {c:'KYI', n:'Kalyani'}, {c:'MPJ', n:'Madanpur'}, {c:'SMX', n:'Simurali'}, {c:'PXR', n:'Palpara'}, {c:'CDH', n:'Chakdah'}, {c:'PDX', n:'Payradanga'}, {c:'RHA', n:'Ranaghat'},
+            // Ranaghat -> Gede / Krishnanagar / Shantipur
+            {c:'KLNP', n:'Kalinarayanpur'}, {c:'BIJ', n:'Birnagar'}, {c:'THP', n:'Taherpur'}, {c:'BDZ', n:'Badkulla'}, {c:'AG', n:'Aranghata'}, {c:'BNKA', n:'Bankimnagar'}, {c:'MAJ', n:'Majhergram'}, {c:'BHNA', n:'Bhayna'}, {c:'BGL', n:'Bagula'}, {c:'MYHT', n:'Mayurhat'}, {c:'TNX', n:'Taraknagar'}, {c:'MIJ', n:'Majhdia'}, {c:'BPN', n:'Banpur'}, {c:'HRSR', n:'Harishnagar'}, {c:'GEDE', n:'Gede'}, {c:'HBE', n:'Habibpur'}, {c:'FLU', n:'Fulia'}, {c:'STB', n:'Shantipur'}, {c:'BTKB', n:'Bathna Krittibas'},
+            // Krishnanagar -> Lalgola
+            {c:'KNJ', n:'Krishnanagar City Jn'}, {c:'BPD', n:'Bahadurpur'}, {c:'DHU', n:'Dhubulia'}, {c:'MGM', n:'Muragachha'}, {c:'SVH', n:'Sonadanga'}, {c:'BTY', n:'Bethuadahari'}, {c:'DEB', n:'Debagram'}, {c:'PCX', n:'Paglachandi'}, {c:'PLY', n:'Plassey'}, {c:'REJ', n:'Rejinagar'}, {c:'BEB', n:'Beldanga'}, {c:'BFT', n:'Bhabta'}, {c:'SGV', n:'Sargachhi'}, {c:'BPC', n:'Berhampur Court'}, {c:'CSZ', n:'Cossimbazar'}, {c:'MBB', n:'Murshidabad'}, {c:'JJG', n:'Jiaganj'}, {c:'BQG', n:'Bhagawangola'}, {c:'KRP', n:'Krishnapur Jn'}, {c:'LGL', n:'Lalgola'},
+            // Bongaon Section
+            {c:'DDC', n:'Dum Dum Cantonment'}, {c:'DGNR', n:'Durganagar'}, {c:'BBT', n:'Birati'}, {c:'BRPK', n:'Bisharpara Kodalia'}, {c:'NBE', n:'New Barrackpur'}, {c:'MMG', n:'Madhyamgram'}, {c:'HHR', n:'Hridaypur'}, {c:'BT', n:'Barasat'}, {c:'BMG', n:'Bamangachi'}, {c:'DTK', n:'Duttapukur'}, {c:'BZRA', n:'Bira'}, {c:'GMA', n:'Guma'}, {c:'ASKR', n:'Ashokenagar Road'}, {c:'HB', n:'Habra'}, {c:'MSL', n:'Machlandapur'}, {c:'GBG', n:'Gobardanga'}, {c:'TKNR', n:'Thakurnagar'}, {c:'CDP', n:'Chandpara'}, {c:'BNAA', n:'Bibhutibhusan Halt'}, {c:'BNJ', n:'Bongaon'}, {c:'GN', n:'Gopalnagar'}, {c:'PTPL', n:'Petrapole'},
+            // Barasat -> Hasnabad Section
+            {c:'KZPR', n:'Kazipara'}, {c:'KBGH', n:'Karea Kadambagachhi'}, {c:'BHKA', n:'Bahira Kalibari'}, {c:'SXC', n:'Sondalia'}, {c:'BGRD', n:'Beliaghata Road'}, {c:'LBTL', n:'Lebutala'}, {c:'BSLA', n:'Bhasila'}, {c:'HRO', n:'Haroa Road'}, {c:'KMZA', n:'Kankra Mirzanagar'}, {c:'MPE', n:'Malatipur'}, {c:'GGV', n:'Ghoradasghona'}, {c:'CQR', n:'Champapukur'}, {c:'BBLA', n:'Bhyabla'}, {c:'BSHT', n:'Basirhat'}, {c:'MATN', n:'Matnia Anantapur'}, {c:'MPN', n:'Madhyampur'}, {c:'NMDR', n:'Nimdhari'}, {c:'TKF', n:'Taki Road'}, {c:'HNB', n:'Hasnabad'},
+            // Sealdah South Section
+            {c:'LKF', n:'Lake Gardens'}, {c:'TLG', n:'Tollygunge'}, {c:'NACC', n:'New Alipur'}, {c:'MJT', n:'Majherhat'}, {c:'BRJ', n:'Brace Bridge'}, {c:'SSP', n:'Santoshpur'}, {c:'AQR', n:'Akra'}, {c:'NAI', n:'Nungi'}, {c:'BGB', n:'Budge Budge'},
+            {c:'BLN', n:'Ballygunge'}, {c:'PQS', n:'Park Circus'}, {c:'DHK', n:'Dhakuria'}, {c:'JDP', n:'Jadavpur'}, {c:'BGJT', n:'Baghajatin'}, {c:'GIA', n:'Garia'}, {c:'NGRI', n:'New Garia'}, {c:'NRPR', n:'Narendrapur'}, {c:'SPR', n:'Sonarpur'}, {c:'BDYP', n:'Bidyadharpur'}, {c:'KLKR', n:'Kalikapur'}, {c:'CHT', n:'Champahati'}, {c:'PLF', n:'Piali'}, {c:'GOF', n:'Ghutiari Sharif'}, {c:'BTPG', n:'Bethberia Ghola'}, {c:'TLX', n:'Taldi'}, {c:'CG', n:'Canning'},
+            {c:'SBGR', n:'Subhashgram'}, {c:'MAK', n:'Mallikpur'}, {c:'BRP', n:'Baruipur'}, {c:'SSRD', n:'Shasan Road'}, {c:'KRXM', n:'Krishnamohan'}, {c:'DPDP', n:'Dhapdhapi'}, {c:'SJPR', n:'Surjyapur'}, {c:'GCN', n:'Gocharan'}, {c:'HGA', n:'Hogla'}, {c:'DBT', n:'Dakshin Barasat'}, {c:'BARU', n:'Baharu'}, {c:'JNM', n:'Jaynagar Majilpur'}, {c:'MPRD', n:'Mathurapur Road'}, {c:'MDBP', n:'Madhabpur'}, {c:'LKPR', n:'Lakshmikantapur'}, {c:'URP', n:'Udairampur'}, {c:'KUL', n:'Kulpi'}, {c:'KARN', n:'Karanjali'}, {c:'NCPM', n:'Nischindapur Market'}, {c:'NCP', n:'Nischindapur'}, {c:'MDGB', n:'Madhabnagar'}, {c:'KHGR', n:'Kashinagar'}, {c:'KWDP', n:'Kakdwip'}, {c:'UKHT', n:'Ukilerhat'}, {c:'NMKA', n:'Namkhana'},
+            {c:'HT', n:'Hotor'}, {c:'DMU', n:'Dhamua'}, {c:'MGT', n:'Magrahat'}, {c:'D', n:'Deula'}, {c:'NTA', n:'Netra'}, {c:'BSD', n:'Basuldanga'}, {c:'GURN', n:'Gurudasnagar'}, {c:'SNU', n:'Sangrampur'}, {c:'DH', n:'Diamond Harbour'},
+            // Kalyani Branch
+            {c:'KLYG', n:'Kalyani Ghoshpara'}, {c:'KLYS', n:'Kalyani Silpanchal'}, {c:'KLYM', n:'Kalyani Simanta'},
+            // Kolkata Terminal / Circular Route
+            {c:'KOAA', n:'Kolkata Terminal'}, {c:'BARN', n:'Baranagar Road'}, {c:'DAKE', n:'Dakshineswar'}, {c:'BLYG', n:'Ballyghat'}, {c:'PTKR', n:'Patipukur'}, {c:'CP', n:'Chitpur'}, {c:'TALA', n:'Tala'}, {c:'BBR', n:'Bagbazar'}, {c:'SOLA', n:'Sovabazar Ahiritola'}, {c:'BZB', n:'Burrabazar'}, {c:'BBDB', n:'BBD Bag'}, {c:'EDG', n:'Eden Garden'}, {c:'PPGT', n:'Princepghat'},
+            // Halts
+            {c:'AKIP', n:'Akaipur'}, {c:'AHT', n:'Amghata'}, {c:'BHGH', n:'Bahirgachhi'}, {c:'BHPA', n:'Bahirpua'}, {c:'BLYH', n:'Bally Halt'}, {c:'CPHT', n:'Coopers Halt'}, {c:'DTG', n:'Dignagar'}, {c:'GQD', n:'Gourdaha'}, {c:'JKL', n:'Jalalkhalli'}, {c:'KIRP', n:'Khidirpur'}, {c:'NBRN', n:'Nabaraynagar'}, {c:'NBPH', n:'New Barlarampur'}, {c:'PNCB', n:'Panchberia Halt'}, {c:'PRTL', n:'Pirtala'}, {c:'RMTR', n:'Remount Road'}, {c:'SNHT', n:'Sanhati'}, {c:'SNTB', n:'Santinagar'}, {c:'STBB', n:'Satberia'}, {c:'SGBA', n:'Sir Gurudas Banerjee Halt'}, {c:'SRJN', n:'Sirajnagar'}, {c:'SBNM', n:'Subarnamrigi'}, {c:'UTN', n:'Uttar Radhanagar'}
+        ];
+
+        // Assigning mock coordinates so map functions for all stations. 
+        // Real app would need actual lat/lng for every station.
+        const stationDatabase = rawStations.map(st => ({
+            name: st.n, 
+            code: st.c, 
+            lat: 22.567 + (Math.random() - 0.5) * 1.5, 
+            lng: 88.371 + (Math.random() - 0.5) * 1.5
+        }));
+
+        // Override major stations with real coordinates for realism
+        const realCoords = {
+            'SDAH': [22.567, 88.371], 'DDJ': [22.622, 88.393], 'NH': [22.894, 88.419], 
+            'RHA': [23.176, 88.528], 'STB': [23.245, 88.434], 'KNJ': [23.401, 88.503], 
+            'BNJ': [23.045, 88.825], 'BRP': [22.361, 88.432], 'DH': [22.189, 88.192]
+        };
+        stationDatabase.forEach(st => {
+            if(realCoords[st.code]) { st.lat = realCoords[st.code][0]; st.lng = realCoords[st.code][1]; }
         });
 
-
-        loadingBox.innerHTML =
-            "✅ " +
-            stationDatabase.length +
-            " stations loaded successfully";
-
-
-        loadingBox.style.color = "#1e8738";
-
-
-        document.getElementById(
-            "from-station"
-        ).disabled = false;
-
-
-        document.getElementById(
-            "to-station"
-        ).disabled = false;
-
-
-        document.getElementById(
-            "find-button"
-        ).disabled = false;
-
-
-        setupAutocomplete(
-            document.getElementById("from-station"),
-            document.getElementById("from-autocomplete-list")
-        );
-
-
-        setupAutocomplete(
-            document.getElementById("to-station"),
-            document.getElementById("to-autocomplete-list")
-        );
-
-
-        console.log(
-            "Supabase stations loaded:",
-            stationDatabase.length
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "Supabase station loading error:",
-            error
-        );
-
-
-        loadingBox.style.display = "none";
-
-
-        errorBox.style.display = "block";
-
-
-        errorBox.innerHTML = `
-            <strong>⚠️ Station database loading failed</strong>
-            <br><br>
-            ${escapeHtml(error.message || "Unknown error")}
-            <br><br>
-            Please check Supabase API / RLS settings.
-        `;
-
-    }
-
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-   ========================================================= */
-
-function escapeHtml(value) {
-
-    return String(value)
-
-        .replace(/&/g, "&amp;")
-
-        .replace(/</g, "&lt;")
-
-        .replace(/>/g, "&gt;")
-
-        .replace(/"/g, "&quot;")
-
-        .replace(/'/g, "&#039;");
-
-}
-
-
-/* =========================================================
-   AUTOCOMPLETE
-   ========================================================= */
-
-function setupAutocomplete(
-    inputElement,
-    listElement
-) {
-
-    inputElement.addEventListener(
-        "input",
-        function() {
-
-            const val =
-                this.value.trim().toLowerCase();
-
-
-            listElement.innerHTML = "";
-
-
-            if (!val) {
-
-                listElement.style.display =
-                    "none";
-
-                return;
-
+        // ================= RAILRADAR STATION SYNC =================
+        const API_BASE = 'https://wtvrbfqezpmxutnwjdsp.supabase.co/functions/v1/railradar-proxy';
+        async function syncStationsFromAPI() {
+            try {
+                const url = new URL(API_BASE);
+                url.searchParams.set('action', 'stations');
+                const response = await fetch(url.toString(), { headers: { 'Accept': 'application/json' } });
+                if (!response.ok) return;
+                const payload = await response.json();
+                const rows = Array.isArray(payload?.data) ? payload.data : [];
+                rows.forEach(row => {
+                    const code = row.code || row.stationCode;
+                    const name = row.name || row.stationName;
+                    if (!code || !name) return;
+                    const existing = stationDatabase.find(s => s.code === code);
+                    if (existing) { existing.name = name; return; }
+                    stationDatabase.push({ name, code, lat: Number(row.lat || row.latitude) || 22.567, lng: Number(row.lng || row.longitude) || 88.371 });
+                });
+            } catch (_) {
+                // Local station database remains available if the API is temporarily unavailable.
             }
+        }
+        syncStationsFromAPI();
 
-
-            const matches =
-                stationDatabase
-
-                    .filter(st =>
-
-                        st.name
-                            .toLowerCase()
-                            .includes(val)
-
-                        ||
-
-                        st.code
-                            .toLowerCase()
-                            .includes(val)
-
-                    )
-
-                    .slice(0, 20);
-
-
-            listElement.style.display =
-                "block";
-
-
-            if (matches.length === 0) {
-
-                listElement.innerHTML = `
-                    <div class="autocomplete-item"
-                         style="color:red;">
-                        No station found
-                    </div>
-                `;
-
-                return;
-
-            }
-
-
-            matches.forEach(match => {
-
-                const div =
-                    document.createElement("div");
-
-
-                div.className =
-                    "autocomplete-item";
-
-
-                div.innerHTML = `
-
-                    <span class="station-code-badge">
-                        ${escapeHtml(match.code)}
-                    </span>
-
-                    <span>
-                        ${escapeHtml(match.name)}
-                    </span>
-
-                `;
-
-
-                div.addEventListener(
-                    "click",
-                    function() {
-
-                        inputElement.value =
-                            match.name;
-
-                        inputElement.dataset.code =
-                            match.code;
-
-                        listElement.style.display =
-                            "none";
-
-                    }
+        // ================= AUTOCOMPLETE LOGIC =================
+        function setupAutocomplete(inputElement, listElement) {
+            inputElement.addEventListener("input", function() {
+                let val = this.value;
+                listElement.innerHTML = "";
+                if (!val) { listElement.style.display = "none"; return; }
+                
+                listElement.style.display = "block";
+                
+                // Match by name or code
+                const matches = stationDatabase.filter(st => 
+                    st.name.toLowerCase().includes(val.toLowerCase()) || 
+                    st.code.toLowerCase().includes(val.toLowerCase())
                 );
 
-
-                listElement.appendChild(div);
-
+                matches.forEach(match => {
+                    let div = document.createElement("div");
+                    div.className = "autocomplete-item";
+                    div.innerHTML = `<span class="station-code-badge">${match.code}</span> <span>${match.name}</span>`;
+                    
+                    div.addEventListener("click", function() {
+                        inputElement.value = match.name;
+                        inputElement.dataset.code = match.code;
+                        listElement.style.display = "none";
+                    });
+                    listElement.appendChild(div);
+                });
+                
+                if(matches.length === 0) {
+                    listElement.innerHTML = `<div class="autocomplete-item" style="color:red;">No station found</div>`;
+                }
             });
 
+            document.addEventListener("click", function (e) {
+                if (e.target !== inputElement) listElement.style.display = "none";
+            });
         }
-    );
 
+        setupAutocomplete(document.getElementById("from-station"), document.getElementById("from-autocomplete-list"));
+        setupAutocomplete(document.getElementById("to-station"), document.getElementById("to-autocomplete-list"));
 
-    document.addEventListener(
-        "click",
-        function(e) {
+        function swapStations() {
+            let fromInput = document.getElementById("from-station");
+            let toInput = document.getElementById("to-station");
+            let temp = fromInput.value;
+            fromInput.value = toInput.value;
+            toInput.value = temp;
+        }
 
-            if (
-                e.target !== inputElement &&
-                !listElement.contains(e.target)
-            ) {
+        // ================= RAILRADAR API =================
+        // Supabase Edge Function. API key stays safely on the server/proxy.
+        let lastRoute = { from: null, to: null };
+        let lastTrains = [];
 
-                listElement.style.display =
-                    "none";
+        async function railRadar(action, params = {}) {
+            const url = new URL(API_BASE);
+            url.searchParams.set('action', action);
+            Object.entries(params).forEach(([key, value]) => {
+                if (value !== undefined && value !== null && value !== '') url.searchParams.set(key, value);
+            });
 
+            const response = await fetch(url.toString(), {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
+            });
+
+            let payload;
+            try { payload = await response.json(); }
+            catch (_) { throw new Error('Server returned an invalid response.'); }
+
+            if (!response.ok || payload.success === false) {
+                const msg = typeof payload.error === 'string'
+                    ? payload.error
+                    : (payload.error?.message || 'Unable to get train data.');
+                throw new Error(msg);
+            }
+            return payload.data;
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>'"]/g, ch => ({
+                '&':'&amp;', '<':'&lt;', '>':'&gt;', "'":'&#39;', '"':'&quot;'
+            }[ch]));
+        }
+
+        function setLoading(message = 'Loading live train data…') {
+            document.getElementById('train-results').innerHTML = `
+                <div class="extra-card" style="justify-content:center; padding:28px;">
+                    <span style="font-size:1.5rem; margin-right:10px;">⏳</span>
+                    <span>${escapeHtml(message)}</span>
+                </div>`;
+        }
+
+        function normalizeTrainList(data) {
+            if (Array.isArray(data)) return data;
+            if (!data || typeof data !== 'object') return [];
+            const candidates = [data.trains, data.results, data.items, data.data, data.list];
+            for (const item of candidates) if (Array.isArray(item)) return item;
+            return [];
+        }
+
+        function getTrainNumber(train) {
+            return train?.trainNumber || train?.number || train?.train?.number || train?.code || '';
+        }
+        function getTrainName(train) {
+            return train?.trainName || train?.name || train?.train?.name || 'Train';
+        }
+        function getTime(value) {
+            if (!value) return '';
+            if (typeof value === 'string') {
+                const match = value.match(/\b(\d{1,2}:\d{2})/);
+                return match ? match[1] : value;
+            }
+            return '';
+        }
+        function getDeparture(train) {
+            return getTime(train?.departureTime || train?.departure || train?.fromTime || train?.schedule?.departure);
+        }
+        function getArrival(train) {
+            return getTime(train?.arrivalTime || train?.arrival || train?.toTime || train?.schedule?.arrival);
+        }
+        function getStatus(train) {
+            return train?.status || train?.trainStatus || train?.currentStatus || 'available';
+        }
+
+        function renderTrainCards(trains, fromCode, toCode) {
+            const resultsDiv = document.getElementById('train-results');
+            lastTrains = Array.isArray(trains) ? trains : [];
+
+            if (!lastTrains.length) {
+                resultsDiv.innerHTML = `
+                    <div class="extra-card" style="display:block; text-align:center; padding:30px 15px;">
+                        <div style="font-size:2rem; margin-bottom:8px;">🚆</div>
+                        <strong>No trains found</strong>
+                        <p style="margin-top:6px; color:#777; font-size:.9rem;">Try another station or route.</p>
+                    </div>`;
+                return;
             }
 
-        }
-    );
-
-}
-
-
-/* =========================================================
-   SWAP STATIONS
-   ========================================================= */
-
-function swapStations() {
-
-    const fromInput =
-        document.getElementById(
-            "from-station"
-        );
-
-    const toInput =
-        document.getElementById(
-            "to-station"
-        );
-
-
-    const temp =
-        fromInput.value;
-
-
-    fromInput.value =
-        toInput.value;
-
-
-    toInput.value =
-        temp;
-
-
-    const tempCode =
-        fromInput.dataset.code;
-
-
-    fromInput.dataset.code =
-        toInput.dataset.code;
-
-
-    toInput.dataset.code =
-        tempCode;
-
-}
-
-
-/* =========================================================
-   FIND TRAINS
-   ========================================================= */
-
-function findTrains() {
-
-    const fromInput =
-        document.getElementById(
-            "from-station"
-        ).value.trim();
-
-
-    const toInput =
-        document.getElementById(
-            "to-station"
-        ).value.trim();
-
-
-    if (!fromInput || !toInput) {
-
-        alert(
-            "Please select both From and To stations."
-        );
-
-        return;
-
-    }
-
-
-    const fromStation =
-        stationDatabase.find(
-            s => s.name === fromInput
-        );
-
-
-    const toStation =
-        stationDatabase.find(
-            s => s.name === toInput
-        );
-
-
-    if (!fromStation || !toStation) {
-
-        alert(
-            "Please select stations from the suggestion list."
-        );
-
-        return;
-
-    }
-
-
-    document.getElementById(
-        "app-header"
-    ).innerHTML = `
-
-        <button
-            class="back-btn"
-            onclick="goHome()">
-
-            ← &nbsp; Back
-
-        </button>
-
-    `;
-
-
-    document.getElementById(
-        "screen-search"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "screen-trains"
-    ).style.display = "block";
-
-
-    document.getElementById(
-        "route-title"
-    ).innerText =
-        `${fromStation.name} ➔ ${toStation.name}`;
-
-
-    const resultsDiv =
-        document.getElementById(
-            "train-results"
-        );
-
-
-    resultsDiv.innerHTML = "";
-
-
-    /*
-       NOTE:
-       এখানে এখনো actual train timetable নেই।
-       তাই demo train cards দেখানো হচ্ছে।
-       Station data কিন্তু Supabase থেকে এসেছে।
-    */
-
-    const trains = [
-
-        {
-            number: "31311",
-            name: `${fromStation.name} Local`,
-            departure: "06:15 AM",
-            arrival: "07:05 AM"
-        },
-
-        {
-            number: "31315",
-            name: `${fromStation.name} Local`,
-            departure: "07:10 AM",
-            arrival: "08:00 AM"
-        },
-
-        {
-            number: "31321",
-            name: `${fromStation.name} Local`,
-            departure: "08:20 AM",
-            arrival: "09:10 AM"
-        },
-
-        {
-            number: "31327",
-            name: `${fromStation.name} Local`,
-            departure: "09:30 AM",
-            arrival: "10:20 AM"
+            resultsDiv.innerHTML = '';
+            lastTrains.forEach((train, index) => {
+                const number = getTrainNumber(train);
+                const name = getTrainName(train);
+                const dep = getDeparture(train);
+                const arr = getArrival(train);
+                const status = getStatus(train);
+                const card = document.createElement('div');
+                card.className = 'train-card';
+                const mapTarget = lastRoute?.from && lastRoute?.to ? `onclick="event.stopPropagation(); openMap('${escapeHtml(lastRoute.from.name)}','${escapeHtml(lastRoute.to.name)}')"` : '';
+                card.innerHTML = `
+                    <div class="train-details" style="flex:1;">
+                        <h4>${escapeHtml(number ? number + ' - ' : '')}${escapeHtml(name)}</h4>
+                        <p>${dep ? `Departure: <b>${escapeHtml(dep)}</b>` : 'Schedule available'}${arr ? ` &nbsp; • &nbsp; Arrival: <b>${escapeHtml(arr)}</b>` : ''}</p>
+                        <p style="margin-top:6px; color:#1e8738;">● ${escapeHtml(status)}</p>
+                        <div style="display:flex; gap:7px; flex-wrap:wrap; margin-top:10px;">
+                            ${number ? `<button class="mini-btn" onclick="event.stopPropagation(); showTrainLive('${escapeHtml(number)}')">📍 Live</button>` : ''}
+                            ${number ? `<button class="mini-btn" onclick="event.stopPropagation(); showSeatForm('${escapeHtml(number)}','${escapeHtml(fromCode)}','${escapeHtml(toCode)}')">💺 Seats</button>` : ''}
+                        </div>
+                    </div>
+                    <div class="view-map-icon" ${mapTarget}>📍</div>`;
+                if (lastRoute?.from && lastRoute?.to) card.onclick = () => openMap(lastRoute.from.name, lastRoute.to.name);
+                resultsDiv.appendChild(card);
+            });
         }
 
-    ];
-
-
-    trains.forEach(train => {
-
-        const card =
-            document.createElement("div");
-
-
-        card.className =
-            "train-card";
-
-
-        card.innerHTML = `
-
-            <div class="train-details">
-
-                <h4>
-                    ${train.number}
-                    -
-                    ${escapeHtml(train.name)}
-                </h4>
-
-                <p>
-                    Departs:
-                    <b>${train.departure}</b>
-                    |
-                    Arrives:
-                    <b>${train.arrival}</b>
-                </p>
-
-                <p
-                    style="
-                        margin-top:5px;
-                        color:#1e8738;
-                    "
-                >
-                    Run Days: Daily
-                </p>
-
-            </div>
-
-            <div class="view-map-icon">
-                📍
-            </div>
-
-        `;
-
-
-        card.onclick =
-            () =>
-                openMap(
-                    fromStation.name,
-                    toStation.name,
-                    train.number
-                );
-
-
-        resultsDiv.appendChild(card);
-
-    });
-
-}
-
-
-/* =========================================================
-   GO HOME
-   ========================================================= */
-
-function goHome() {
-
-    document.getElementById(
-        "screen-search"
-    ).style.display = "block";
-
-
-    document.getElementById(
-        "screen-trains"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "screen-map"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "app-header"
-    ).innerHTML = `
-
-        <div class="header-left">
-
-            <span class="header-icon">
-                ☰
-            </span>
-
-            <span>
-                Sealdah Train Service
-            </span>
-
-        </div>
-
-        <span class="header-icon">
-            🎤
-        </span>
-
-    `;
-
-}
-
-
-/* =========================================================
-   BACK TO TRAIN LIST
-   ========================================================= */
-
-function goBackToTrains() {
-
-    document.getElementById(
-        "screen-search"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "screen-trains"
-    ).style.display = "block";
-
-
-    document.getElementById(
-        "screen-map"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "app-header"
-    ).innerHTML = `
-
-        <button
-            class="back-btn"
-            onclick="goHome()">
-
-            ← &nbsp; Train List
-
-        </button>
-
-    `;
-
-}
-
-
-/* =========================================================
-   MAP
-   ========================================================= */
-
-let leafletMap = null;
-
-let trainMarker = null;
-
-let routeLine = null;
-
-
-function openMap(
-    fromName,
-    toName,
-    trainNumber
-) {
-
-    document.getElementById(
-        "screen-trains"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "screen-map"
-    ).style.display = "block";
-
-
-    document.getElementById(
-        "app-header"
-    ).innerHTML = `
-
-        <button
-            class="back-btn"
-            onclick="goBackToTrains()">
-
-            ← &nbsp; Train List
-
-        </button>
-
-    `;
-
-
-    document.getElementById(
-        "map-train-title"
-    ).innerText =
-        `🚆 ${trainNumber} Live Map`;
-
-
-    if (!leafletMap) {
-
-        leafletMap =
-            L.map("map-container")
-             .setView(
-                 [22.567, 88.371],
-                 9
-             );
-
-
-        L.tileLayer(
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            {
-                attribution:
-                    "© OpenStreetMap"
+        async function findTrains() {
+            const fromInput = document.getElementById('from-station');
+            const toInput = document.getElementById('to-station');
+            const fromName = fromInput.value.trim();
+            const toName = toInput.value.trim();
+            const fromSt = stationDatabase.find(s => s.name === fromName) || stationDatabase.find(s => s.code === fromInput.dataset.code);
+            const toSt = stationDatabase.find(s => s.name === toName) || stationDatabase.find(s => s.code === toInput.dataset.code);
+
+            if (!fromSt || !toSt) {
+                alert('Please select both stations from the suggestion list.');
+                return;
             }
-        ).addTo(leafletMap);
-
-    }
-
-
-    setTimeout(
-        () => {
-            leafletMap.invalidateSize();
-        },
-        200
-    );
-
-
-    const fromSt =
-        stationDatabase.find(
-            s => s.name === fromName
-        ) || stationDatabase[0];
-
-
-    const toSt =
-        stationDatabase.find(
-            s => s.name === toName
-        ) || stationDatabase[0];
-
-
-    if (routeLine) {
-
-        leafletMap.removeLayer(
-            routeLine
-        );
-
-    }
-
-
-    if (trainMarker) {
-
-        leafletMap.removeLayer(
-            trainMarker
-        );
-
-    }
-
-
-    routeLine =
-        L.polyline(
-
-            [
-                [fromSt.lat, fromSt.lng],
-
-                [toSt.lat, toSt.lng]
-            ],
-
-            {
-                color: "#1963a6",
-                weight: 4
+            if (fromSt.code === toSt.code) {
+                alert('From and To stations cannot be the same.');
+                return;
             }
 
-        ).addTo(leafletMap);
+            lastRoute = { from: fromSt, to: toSt };
+            document.getElementById('app-header').innerHTML = `<button class="back-btn" onclick="goHome()">← &nbsp; Back</button>`;
+            document.getElementById('screen-search').style.display = 'none';
+            document.getElementById('screen-trains').style.display = 'block';
+            document.getElementById('screen-map').style.display = 'none';
+            document.getElementById('route-title').innerHTML = `${escapeHtml(fromSt.name)} (${escapeHtml(fromSt.code)}) ➔ ${escapeHtml(toSt.name)} (${escapeHtml(toSt.code)})`;
+            setLoading();
 
-
-    leafletMap.fitBounds(
-        routeLine.getBounds(),
-        {
-            padding: [30, 30]
-        }
-    );
-
-
-    const trainIcon =
-        L.icon({
-
-            iconUrl:
-                "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-
-            shadowUrl:
-                "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-
-            iconSize: [25, 41],
-
-            iconAnchor: [12, 41],
-
-            popupAnchor: [1, -34]
-
-        });
-
-
-    const midLat =
-        (fromSt.lat + toSt.lat) / 2;
-
-
-    const midLng =
-        (fromSt.lng + toSt.lng) / 2;
-
-
-    trainMarker =
-        L.marker(
-            [midLat, midLng],
-            {
-                icon: trainIcon
+            try {
+                const data = await railRadar('trains-between', { from: fromSt.code, to: toSt.code });
+                renderTrainCards(normalizeTrainList(data), fromSt.code, toSt.code);
+            } catch (error) {
+                document.getElementById('train-results').innerHTML = `<div class="extra-card" style="display:block; border-left:4px solid #d93025;"><strong>Unable to load trains</strong><p style="margin-top:7px;color:#777;">${escapeHtml(error.message)}</p><button class="mini-btn" style="margin-top:12px;" onclick="findTrains()">Retry</button></div>`;
             }
-        )
-        .addTo(leafletMap);
-
-
-    trainMarker.bindPopup(`
-
-        <b>🚆 ${escapeHtml(trainNumber)}</b>
-
-        <br><br>
-
-        Live Train Location
-
-        <br>
-
-        Between
-        ${escapeHtml(fromSt.code)}
-        →
-        ${escapeHtml(toSt.code)}
-
-    `).openPopup();
-
-}
-
-
-/* =========================================================
-   START APPLICATION
-   ========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        loadStations();
-
-    }
-);
-
-
-/* =========================================================
-   PWA SERVICE WORKER
-   ========================================================= */
-
-if ("serviceWorker" in navigator) {
-
-    window.addEventListener(
-        "load",
-        () => {
-
-            navigator.serviceWorker
-                .register("/sw.js")
-                .catch(
-                    error =>
-                        console.log(
-                            "Service Worker:",
-                            error
-                        )
-                );
-
         }
-    );
 
-}
+        async function showStationBoard() {
+            const selected = prompt('Enter station code (example: SDAH):', 'SDAH');
+            if (!selected) return;
+            const code = selected.trim().toUpperCase();
+            const st = stationDatabase.find(s => s.code === code) || stationDatabase[0];
+            lastRoute = { from: st, to: st };
+            document.getElementById('app-header').innerHTML = `<button class="back-btn" onclick="goHome()">← &nbsp; Back</button>`;
+            document.getElementById('screen-search').style.display = 'none';
+            document.getElementById('screen-trains').style.display = 'block';
+            document.getElementById('screen-map').style.display = 'none';
+            document.getElementById('route-title').innerHTML = `Station Board • ${escapeHtml(code)}`;
+            setLoading('Loading station departures…');
+            try {
+                const data = await railRadar('station-trains', { code });
+                const station = data?.station || data?.data?.station;
+                const trains = normalizeTrainList(data);
+                if (station) document.getElementById('route-title').innerHTML = `🚉 ${escapeHtml(station.name || code)} (${escapeHtml(station.code || code)})`;
+                renderTrainCards(trains, code, code);
+            } catch (error) {
+                document.getElementById('train-results').innerHTML = `<div class="extra-card" style="display:block;"><strong>Station board error</strong><p style="margin-top:7px;color:#777;">${escapeHtml(error.message)}</p></div>`;
+            }
+        }
 
-</script>
+        async function showStationLive(code = 'SDAH') {
+            try {
+                const data = await railRadar('station-live', { code });
+                const station = data?.station || data;
+                alert(`${station?.name || code}\nStatus window: ${data?.window?.from || ''} - ${data?.window?.to || ''}`);
+            } catch (error) { alert(error.message); }
+        }
 
+        async function showTrainLive(number) {
+            try {
+                const data = await railRadar('train-live', { number });
+                const train = data?.train || data;
+                document.getElementById('map-train-title').innerText = `${number} • ${train?.name || data?.trainName || 'Live Train'}`;
+                if (data?.lat && data?.lng) openLiveTrainMap(data.lat, data.lng, number);
+                else alert(`${number}\nStatus: ${train?.status || data?.status || 'running'}`);
+            } catch (error) { alert(error.message); }
+        }
+
+        function showSeatForm(number, fromCode, toCode) {
+            const date = prompt('Journey date (YYYY-MM-DD):', new Date().toISOString().slice(0,10));
+            if (!date) return;
+            const cls = prompt('Class code (example: 3A, SL, CC):', '3A');
+            if (!cls) return;
+            const quota = prompt('Quota code:', 'GN') || 'GN';
+            checkSeats(number, fromCode, toCode, date, cls.trim().toUpperCase(), quota.trim().toUpperCase());
+        }
+
+        async function checkSeats(number, fromCode, toCode, date, cls, quota) {
+            try {
+                const data = await railRadar('train-seats', {
+                    number, source: fromCode, destination: toCode,
+                    journeyDate: date, classCode: cls, quotaCode: quota
+                });
+                const text = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+                alert(`Seat availability for ${number}\n\n${text.slice(0, 1800)}`);
+            } catch (error) { alert(error.message); }
+        }
+
+        async function showLocalTrains() {
+            document.getElementById('app-header').innerHTML = `<button class="back-btn" onclick="goHome()">← &nbsp; Back</button>`;
+            document.getElementById('screen-search').style.display = 'none';
+            document.getElementById('screen-trains').style.display = 'block';
+            document.getElementById('screen-map').style.display = 'none';
+            const defaultStation = stationDatabase.find(s => s.code === 'SDAH') || stationDatabase[0];
+            lastRoute = { from: defaultStation, to: defaultStation };
+            document.getElementById('route-title').innerHTML = '🚆 Kolkata Local Trains';
+            setLoading('Loading local trains…');
+            try {
+                const data = await railRadar('local-trains', { city: 'Kolkata' });
+                renderTrainCards(normalizeTrainList(data), 'SDAH', 'SDAH');
+            } catch (error) {
+                document.getElementById('train-results').innerHTML = `<div class="extra-card" style="display:block;"><strong>Local train error</strong><p style="margin-top:7px;color:#777;">${escapeHtml(error.message)}</p></div>`;
+            }
+        }
+
+        async function showFilteredTrains(category = '', type = '') {
+            document.getElementById('app-header').innerHTML = `<button class="back-btn" onclick="goHome()">← &nbsp; Back</button>`;
+            document.getElementById('screen-search').style.display = 'none';
+            document.getElementById('screen-trains').style.display = 'block';
+            document.getElementById('screen-map').style.display = 'none';
+            const defaultStation = stationDatabase.find(s => s.code === 'SDAH') || stationDatabase[0];
+            lastRoute = { from: defaultStation, to: defaultStation };
+            document.getElementById('route-title').innerHTML = '🔎 Filtered Trains';
+            setLoading('Applying train filter…');
+            try {
+                const data = await railRadar('filter-trains', { category, type });
+                renderTrainCards(normalizeTrainList(data), 'SDAH', 'SDAH');
+            } catch (error) {
+                document.getElementById('train-results').innerHTML = `<div class="extra-card" style="display:block;"><strong>Filter error</strong><p style="margin-top:7px;color:#777;">${escapeHtml(error.message)}</p></div>`;
+            }
+        }
+
+        function goHome() {
+            document.getElementById('screen-search').style.display = 'block';
+            document.getElementById('screen-trains').style.display = 'none';
+            document.getElementById('screen-map').style.display = 'none';
+            document.getElementById('app-header').innerHTML = `
+                <div class="header-left"><span class="header-icon">☰</span> <span>Where is My Train</span></div>
+                <span class="header-icon">🎤</span>`;
+        }
+
+        function goBackToTrains() {
+            document.getElementById('screen-search').style.display = 'none';
+            document.getElementById('screen-trains').style.display = 'block';
+            document.getElementById('screen-map').style.display = 'none';
+            document.getElementById('app-header').innerHTML = `<button class="back-btn" onclick="goHome()">← &nbsp; Back</button>`;
+        }
+
+        // ================= LIVE MAP LOGIC =================
+        let leafletMap = null;
+        let trainMarker = null;
+        let routeLine = null;
+
+        function openMap(fromName, toName) {
+            document.getElementById('screen-trains').style.display = 'none';
+            document.getElementById('screen-map').style.display = 'block';
+            document.getElementById('app-header').innerHTML = `<button class="back-btn" onclick="goBackToTrains()">← &nbsp; Train List</button>`;
+
+            if (!leafletMap) {
+                leafletMap = L.map('map-container').setView([22.567, 88.371], 9);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(leafletMap);
+            }
+            setTimeout(() => leafletMap.invalidateSize(), 200);
+
+            const fromSt = stationDatabase.find(s => s.name === fromName) || stationDatabase[0];
+            const toSt = stationDatabase.find(s => s.name === toName) || stationDatabase[0];
+            if (routeLine) leafletMap.removeLayer(routeLine);
+            if (trainMarker) leafletMap.removeLayer(trainMarker);
+
+            routeLine = L.polyline([[fromSt.lat, fromSt.lng], [toSt.lat, toSt.lng]], {weight:4}).addTo(leafletMap);
+            leafletMap.fitBounds(routeLine.getBounds(), {padding:[30,30]});
+            const midLat = (fromSt.lat + toSt.lat) / 2;
+            const midLng = (fromSt.lng + toSt.lng) / 2;
+            trainMarker = L.marker([midLat, midLng]).addTo(leafletMap);
+            trainMarker.bindPopup(`<b>🚆 Train route</b><br>${escapeHtml(fromSt.code)} → ${escapeHtml(toSt.code)}`).openPopup();
+            document.getElementById('map-train-title').innerText = `${fromSt.name} → ${toSt.name}`;
+        }
+
+        function openLiveTrainMap(lat, lng, number) {
+            if (!Number.isFinite(Number(lat)) || !Number.isFinite(Number(lng))) return;
+            document.getElementById('screen-search').style.display = 'none';
+            document.getElementById('screen-trains').style.display = 'none';
+            document.getElementById('screen-map').style.display = 'block';
+            document.getElementById('app-header').innerHTML = `<button class="back-btn" onclick="goBackToTrains()">← &nbsp; Train List</button>`;
+            if (!leafletMap) {
+                leafletMap = L.map('map-container').setView([Number(lat), Number(lng)], 12);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(leafletMap);
+            } else leafletMap.setView([Number(lat), Number(lng)], 12);
+            if (routeLine) { leafletMap.removeLayer(routeLine); routeLine = null; }
+            if (trainMarker) leafletMap.removeLayer(trainMarker);
+            trainMarker = L.marker([Number(lat), Number(lng)]).addTo(leafletMap);
+            trainMarker.bindPopup(`<b>🚆 ${escapeHtml(number)}</b><br>Live position`).openPopup();
+            setTimeout(() => leafletMap.invalidateSize(), 200);
+        }
+
+        // PWA setup
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => { navigator.serviceWorker.register('/sw.js'); });
+        }
+    </script>
 </body>
 </html>
