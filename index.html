@@ -1,174 +1,1437 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<meta name="theme-color" content="#07111f">
-<meta name="description" content="Sealdah Train Service AI Bot - premium railway companion">
-<title>Sealdah Train Service • AI Bot</title>
-<link rel="icon" href="logo.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-<style>
-:root{--bg:#07111f;--card:rgba(16,29,48,.82);--line:rgba(255,255,255,.09);--text:#f6f9ff;--muted:#9caec4;--blue:#38bdf8;--blue2:#6366f1;--green:#25d366;--shadow:0 20px 60px rgba(0,0,0,.34)}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Inter,"Noto Sans Bengali",sans-serif;background:radial-gradient(circle at 15% 0%,rgba(56,189,248,.16),transparent 30%),radial-gradient(circle at 100% 100%,rgba(99,102,241,.15),transparent 32%),var(--bg);color:var(--text);min-height:100vh}
-button,input{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}.hidden{display:none!important}
-.topbar{height:72px;position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:10px 22px;background:rgba(7,17,31,.82);backdrop-filter:blur(22px);border-bottom:1px solid var(--line)}
-.brand{display:flex;align-items:center;gap:11px;font-weight:800}.brand img{width:45px;height:45px;border-radius:14px;object-fit:cover;box-shadow:0 7px 25px rgba(56,189,248,.2)}.brand small{display:block;color:var(--muted);font-weight:500;font-size:10px;margin-top:2px}
-.top-actions{display:flex;gap:9px;align-items:center}.iconbtn,.avatarbtn{width:42px;height:42px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.045);color:#fff;display:grid;place-items:center}.avatarbtn{border-radius:50%;overflow:hidden}
-.layout{display:grid;grid-template-columns:250px minmax(0,1fr);max-width:1500px;margin:auto}.sidebar{position:sticky;top:72px;height:calc(100vh - 72px);padding:22px 14px;border-right:1px solid var(--line)}
-.nav-title{font-size:10px;color:#6f8198;text-transform:uppercase;letter-spacing:1.4px;padding:12px 12px 8px}.navitem{width:100%;display:flex;align-items:center;gap:12px;padding:12px 13px;margin:3px 0;border:1px solid transparent;border-radius:13px;background:transparent;color:#b8c7d9;text-align:left}.navitem:hover,.navitem.active{background:rgba(56,189,248,.09);border-color:rgba(56,189,248,.13);color:#fff}.navicon{width:22px;text-align:center}
-.content{padding:24px;min-width:0}.page{max-width:1120px;margin:auto}.hero{display:grid;grid-template-columns:1.4fr .6fr;gap:18px;margin-bottom:18px}.card{background:linear-gradient(145deg,rgba(20,37,59,.9),rgba(9,20,35,.88));border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:22px}
-.hero-main{position:relative;overflow:hidden;min-height:205px}.eyebrow{color:var(--blue);font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase}h1{font-size:clamp(28px,4vw,46px);line-height:1.05;margin:9px 0 10px}.sub{color:var(--muted);line-height:1.6;max-width:650px}.status{display:inline-flex;align-items:center;gap:7px;padding:7px 10px;border-radius:999px;background:rgba(37,211,102,.08);color:#79f2a0;font-size:11px;font-weight:700;margin-top:17px}.dot{width:7px;height:7px;background:#36e27b;border-radius:50%;box-shadow:0 0 10px #36e27b}.hero-logo{display:grid;place-items:center}.hero-logo img{width:min(190px,70%);border-radius:30px;filter:drop-shadow(0 20px 30px rgba(0,0,0,.35))}
-.sectionhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}.sectionhead h2{font-size:17px}.muted{color:var(--muted);font-size:12px}.searchcard{margin-bottom:18px}.routegrid{display:grid;grid-template-columns:1fr 52px 1fr;gap:10px;align-items:center}.field{position:relative}.field input,.auth input,.chatsearch input{width:100%;padding:14px 15px;border-radius:14px;border:1px solid var(--line);outline:none;background:rgba(4,11,20,.55);color:#fff}.field input:focus,.auth input:focus,.chatsearch input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(56,189,248,.08)}.field label{display:block;font-size:11px;color:var(--muted);margin:0 0 7px 4px}.swap{height:45px;width:45px;border-radius:50%;border:1px solid var(--line);background:rgba(56,189,248,.08);color:var(--blue);font-size:18px}.primary{border:0;border-radius:13px;padding:13px 17px;background:linear-gradient(135deg,#38bdf8,#6366f1);color:#07111f;font-weight:800;box-shadow:0 12px 30px rgba(56,189,248,.2)}.primary.wide{width:100%;margin-top:13px}
-.autocomplete{position:absolute;left:0;right:0;top:78px;z-index:100;background:#122238;border:1px solid var(--line);border-radius:14px;overflow:auto;max-height:220px;box-shadow:var(--shadow)}.autoitem{padding:11px 13px;display:flex;gap:10px;align-items:center;border-bottom:1px solid rgba(255,255,255,.05)}.autoitem:hover{background:rgba(255,255,255,.05)}.code{min-width:52px;text-align:center;padding:5px 7px;border-radius:7px;background:rgba(56,189,248,.13);color:var(--blue);font-size:10px;font-weight:800}
-.quickgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}.quick{padding:16px;border-radius:18px;background:rgba(255,255,255,.035);border:1px solid var(--line);color:#fff;text-align:left}.quick:hover{transform:translateY(-2px);border-color:rgba(56,189,248,.25)}.quick b{display:block;font-size:12px;margin-top:10px}.qicon{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;background:rgba(56,189,248,.1);font-size:19px}
-.grid2{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:18px}.feature{min-height:180px}.feature ul{margin-top:13px;padding-left:17px;color:var(--muted);font-size:13px;line-height:2}
-.results{display:grid;gap:10px}.train{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:16px;border:1px solid var(--line);border-radius:17px;background:rgba(255,255,255,.025)}.train:hover{border-color:rgba(56,189,248,.3)}.train h3{font-size:15px}.train p{color:var(--muted);font-size:11px;margin-top:5px}.livepill{font-size:10px;color:#78efa0;background:rgba(37,211,102,.08);padding:6px 8px;border-radius:999px;white-space:nowrap}
-.profilebar{display:flex;align-items:center;gap:12px}.miniavatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#38bdf8,#6366f1);display:grid;place-items:center;font-weight:800}.userrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px;border:1px solid var(--line);border-radius:15px;margin-top:9px}.userrow button{padding:8px 11px;border:1px solid var(--line);background:rgba(56,189,248,.08);color:#fff;border-radius:10px;font-size:11px}
-.chatwrap{height:calc(100vh - 150px);min-height:560px;display:grid;grid-template-columns:300px minmax(0,1fr);border:1px solid var(--line);border-radius:22px;overflow:hidden;background:rgba(10,20,34,.76);box-shadow:var(--shadow)}.chatlist{border-right:1px solid var(--line);padding:15px;overflow:auto}.chatsearch{margin-bottom:12px}.conversation{display:flex;gap:10px;align-items:center;padding:11px;border-radius:14px;cursor:pointer}.conversation:hover,.conversation.active{background:rgba(56,189,248,.08)}.conversation .info{min-width:0;flex:1}.conversation b{font-size:12px}.conversation small{display:block;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:10px;margin-top:3px}.chatpanel{display:flex;flex-direction:column;min-width:0}.chathead{padding:15px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:11px}.chatbody{flex:1;padding:18px;overflow:auto;background:radial-gradient(circle at 70% 20%,rgba(56,189,248,.06),transparent 35%)}.bubble{max-width:72%;padding:10px 12px;border-radius:16px;margin:7px 0;font-size:12px;line-height:1.5}.bubble.me{margin-left:auto;background:linear-gradient(135deg,#1d6c9b,#4451a8);border-bottom-right-radius:5px}.bubble.them{background:rgba(255,255,255,.07);border:1px solid var(--line);border-bottom-left-radius:5px}.chatinput{display:flex;gap:9px;padding:13px;border-top:1px solid var(--line)}.chatinput input{flex:1;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(0,0,0,.25);color:#fff;outline:none}
-.authscreen{min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at 20% 20%,rgba(56,189,248,.14),transparent 28%),var(--bg)}.auth{width:min(440px,100%);padding:28px}.authlogo{width:95px;height:95px;border-radius:28px;display:block;margin:0 auto 18px;object-fit:cover}.auth h1{font-size:27px;text-align:center;margin:0 0 7px}.auth .lead{text-align:center;color:var(--muted);font-size:12px;line-height:1.6;margin-bottom:21px}.auth .field{margin-bottom:11px}.auth .switch{text-align:center;color:var(--muted);font-size:12px;margin-top:17px}.linkbtn{background:none;border:0;color:var(--blue);font-weight:700}
-.toast{position:fixed;right:20px;bottom:20px;z-index:999;padding:12px 15px;border-radius:13px;background:#122238;border:1px solid var(--line);box-shadow:var(--shadow);font-size:12px;transform:translateY(20px);opacity:0;pointer-events:none;transition:.25s}.toast.show{transform:translateY(0);opacity:1}
-#map{height:calc(100vh - 150px);min-height:500px;border-radius:20px;overflow:hidden;border:1px solid var(--line)}.backline{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.ghost{border:1px solid var(--line);background:rgba(255,255,255,.04);color:#fff;padding:9px 12px;border-radius:11px;font-size:11px}
-.bottomnav{display:none}
-@media(max-width:900px){.layout{grid-template-columns:1fr}.sidebar{display:none}.content{padding:15px 13px 85px}.hero{grid-template-columns:1fr}.hero-logo{display:none}.grid2{grid-template-columns:1fr}.quickgrid{grid-template-columns:repeat(3,1fr)}.bottomnav{display:flex;position:fixed;bottom:0;left:0;right:0;height:66px;z-index:100;background:rgba(7,17,31,.93);backdrop-filter:blur(20px);border-top:1px solid var(--line);justify-content:space-around;padding:6px}.bottomnav button{background:none;border:0;color:#91a3b9;font-size:10px}.bottomnav button.active{color:#fff}.bottomnav span{display:block;font-size:19px;margin-bottom:2px}.chatwrap{height:calc(100vh - 145px);min-height:0;grid-template-columns:90px 1fr}.chatlist{padding:8px}.chatsearch{display:none}.conversation{justify-content:center;padding:10px}.conversation .info{display:none}.routegrid{grid-template-columns:1fr 42px 1fr}}
-@media(max-width:560px){.topbar{padding:9px 13px}.brand div{font-size:12px}.quickgrid{grid-template-columns:repeat(2,1fr)}.card{padding:17px;border-radius:18px}.routegrid{grid-template-columns:1fr}.swap{justify-self:center;transform:rotate(90deg)}.train{align-items:flex-start}.bubble{max-width:86%}}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Sealdah Train Passenger App</title>
+
+    <meta name="theme-color" content="#1963a6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+
+    <!-- Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+                         Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background: #f2f4f5;
+            color: #333;
+        }
+
+        .header {
+            background: #1963a6;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: 500;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            cursor: pointer;
+            font-size: 1.5rem;
+        }
+
+        .tabs {
+            background: #1963a6;
+            display: flex;
+            justify-content: space-around;
+            padding: 0 10px 10px;
+            color: white;
+            font-weight: 500;
+            font-size: .95rem;
+        }
+
+        .tab {
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            opacity: .8;
+        }
+
+        .tab.active {
+            background: white;
+            color: #1963a6;
+            opacity: 1;
+        }
+
+        .container {
+            padding: 15px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .search-card {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 15px 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.1);
+            position: relative;
+            margin-bottom: 15px;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            position: relative;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .input-row:last-of-type {
+            border-bottom: none;
+            margin-bottom: 10px;
+        }
+
+        .input-row input {
+            flex: 1;
+            padding: 18px 10px 18px 40px;
+            border: none;
+            font-size: 1rem;
+            outline: none;
+            background: transparent;
+            color: #333;
+        }
+
+        .input-row input:disabled {
+            opacity: .6;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 5px;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .swap-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            color: #1e8738;
+            box-shadow: 0 1px 3px rgba(0,0,0,.1);
+        }
+
+        .autocomplete-items {
+            position: absolute;
+            z-index: 99;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #fff;
+            max-height: 250px;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,.2);
+            border-radius: 0 0 8px 8px;
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 12px 15px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            font-size: .95rem;
+        }
+
+        .autocomplete-item:hover {
+            background: #f9f9f9;
+        }
+
+        .station-code-badge {
+            background: #1963a6;
+            color: white;
+            padding: 4px 6px;
+            border-radius: 4px;
+            font-size: .8rem;
+            font-weight: bold;
+            margin-right: 12px;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .btn-find {
+            width: 100%;
+            background: #1e8738;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+
+        .btn-find:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .extra-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,.1);
+            font-size: 1rem;
+            color: #333;
+            border: 1px solid #f0f0f0;
+        }
+
+        #screen-search {
+            display: block;
+        }
+
+        #screen-trains,
+        #screen-map {
+            display: none;
+        }
+
+        .train-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.1);
+            cursor: pointer;
+            border-left: 5px solid #1e8738;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .train-card:hover {
+            background: #f5f9f6;
+        }
+
+        .train-details h4 {
+            color: #1963a6;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .train-details p {
+            font-size: .9rem;
+            color: #666;
+        }
+
+        .view-map-icon {
+            color: #1e8738;
+            font-size: 1.5rem;
+        }
+
+        #map-container {
+            height: calc(100vh - 140px);
+            width: 100%;
+            border-radius: 8px;
+            z-index: 1;
+        }
+
+        .map-status-bar {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.1);
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .loading-box {
+            background: white;
+            padding: 18px;
+            border-radius: 8px;
+            text-align: center;
+            color: #1963a6;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,.1);
+        }
+
+        .status-text {
+            font-size: .85rem;
+            text-align: center;
+            margin: 8px 0 12px;
+            color: #666;
+        }
+
+        .error-box {
+            background: #fff0f0;
+            border: 1px solid #ffcaca;
+            color: #b00020;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: .9rem;
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
-<div id="authScreen" class="authscreen">
-  <div class="card auth">
-    <img src="logo.png" class="authlogo" alt="Sealdah Train Service">
-    <h1>Sealdah Train Service</h1>
-    <p class="lead">Premium railway companion with train search, live information and social chat.</p>
-    <div id="loginForm">
-      <div class="field"><label>Email / Username</label><input id="loginId" placeholder="Enter email or username"></div>
-      <div class="field"><label>Password</label><input id="loginPass" type="password" placeholder="Enter password"></div>
-      <button class="primary wide" onclick="login()">Login</button>
-      <div class="switch">New here? <button class="linkbtn" onclick="showSignup()">Create account</button></div>
+
+<!-- HEADER -->
+<div class="header" id="app-header">
+    <div class="header-left">
+        <span class="header-icon">☰</span>
+        <span>Sealdah Train Service</span>
     </div>
-    <div id="signupForm" class="hidden">
-      <div class="field"><label>Full name</label><input id="signupName" placeholder="Your name"></div>
-      <div class="field"><label>Username</label><input id="signupUser" placeholder="Choose a username"></div>
-      <div class="field"><label>Email</label><input id="signupEmail" type="email" placeholder="you@example.com"></div>
-      <div class="field"><label>Password</label><input id="signupPass" type="password" placeholder="Minimum 6 characters"></div>
-      <button class="primary wide" onclick="signup()">Sign up</button>
-      <div class="switch">Already registered? <button class="linkbtn" onclick="showLogin()">Login</button></div>
-    </div>
-    <p style="text-align:center;color:#6f8198;font-size:9px;margin-top:20px">Created by SUMANMUSIX</p>
-  </div>
+    <span class="header-icon">🎤</span>
 </div>
 
-<div id="app" class="app hidden">
-<header class="topbar">
-  <div class="brand"><img src="logo.png" alt=""><div>Sealdah Train Service<small>AI BOT • PREMIUM</small></div></div>
-  <div class="top-actions"><button class="iconbtn" onclick="openPage('chat')" title="Chat">💬</button><button class="avatarbtn" onclick="openPage('profile')" id="topAvatar">👤</button></div>
-</header>
-<div class="layout">
-<aside class="sidebar">
-  <div class="nav-title">Main</div>
-  <button class="navitem active" data-page="home" onclick="openPage('home')"><span class="navicon">⌂</span>Home</button>
-  <button class="navitem" data-page="trains" onclick="openPage('trains')"><span class="navicon">🚆</span>Train Search</button>
-  <button class="navitem" data-page="map" onclick="openPage('map')"><span class="navicon">📍</span>Live Map</button>
-  <button class="navitem" data-page="chat" onclick="openPage('chat')"><span class="navicon">💬</span>Community Chat</button>
-  <div class="nav-title">Services</div>
-  <button class="navitem" data-page="pnr" onclick="openPage('pnr')"><span class="navicon">🎫</span>PNR Status</button>
-  <button class="navitem" data-page="timetable" onclick="openPage('timetable')"><span class="navicon">🕒</span>Time Table</button>
-  <button class="navitem" data-page="alerts" onclick="openPage('alerts')"><span class="navicon">🔔</span>Alerts & Updates</button>
-  <div class="nav-title">Account</div>
-  <button class="navitem" data-page="profile" onclick="openPage('profile')"><span class="navicon">👤</span>My Profile</button>
-  <button class="navitem" onclick="logout()"><span class="navicon">↪</span>Logout</button>
-</aside>
-<main class="content">
-<div id="page-home" class="page">
-  <div class="hero">
-    <section class="card hero-main"><div class="eyebrow">SEALDAH DIVISION • SMART RAILWAY</div><h1>Your railway,<br><span style="color:var(--blue)">one chat away.</span></h1><p class="sub">Search trains, check route information, explore live status and connect with other passengers from one premium interface.</p><span class="status"><i class="dot"></i> System interface ready</span></section>
-    <section class="card hero-logo"><img src="logo.png" alt="Sealdah Train Service"></section>
-  </div>
-  <section class="card searchcard">
-    <div class="sectionhead"><div><h2>Find your train</h2><div class="muted">Search by station name or code</div></div><span class="muted">SDAH NETWORK</span></div>
-    <div class="routegrid">
-      <div class="field"><label>FROM</label><input id="from" autocomplete="off" placeholder="e.g. Sealdah"><div id="fromList" class="autocomplete hidden"></div></div>
-      <button class="swap" onclick="swapRoute()">⇄</button>
-      <div class="field"><label>TO</label><input id="to" autocomplete="off" placeholder="e.g. Shantipur"><div id="toList" class="autocomplete hidden"></div></div>
+<div class="container">
+
+    <!-- SEARCH SCREEN -->
+    <div id="screen-search">
+
+        <div class="tabs"
+             style="margin:-15px -15px 15px -15px;
+                    padding-top:10px;
+                    border-radius:0 0 15px 15px;">
+
+            <div class="tab">Express</div>
+            <div class="tab">Metro</div>
+            <div class="tab active">Locals</div>
+
+        </div>
+
+        <div id="loading-box" class="loading-box">
+            🚆 Loading station database...
+        </div>
+
+        <div id="error-box" class="error-box"></div>
+
+        <div class="search-card">
+
+            <div class="input-row">
+
+                <span class="input-icon">◎</span>
+
+                <input
+                    type="text"
+                    id="from-station"
+                    placeholder="From Station"
+                    autocomplete="off"
+                    disabled
+                >
+
+                <div id="from-autocomplete-list"
+                     class="autocomplete-items"></div>
+
+            </div>
+
+            <div class="swap-btn" onclick="swapStations()">
+                ⇅
+            </div>
+
+            <div class="input-row">
+
+                <span class="input-icon" style="color:#1963a6;">
+                    ◉
+                </span>
+
+                <input
+                    type="text"
+                    id="to-station"
+                    placeholder="To Station"
+                    autocomplete="off"
+                    disabled
+                >
+
+                <div id="to-autocomplete-list"
+                     class="autocomplete-items"></div>
+
+            </div>
+
+            <button
+                id="find-button"
+                class="btn-find"
+                onclick="findTrains()"
+                disabled
+            >
+                Find trains
+            </button>
+
+        </div>
+
+        <div class="extra-card">
+
+            <span style="
+                color:#1963a6;
+                font-weight:bold;
+                font-size:1.2rem;
+                margin-right:10px;">
+                ((•))
+            </span>
+
+            <span style="flex:1;">
+                Station departure board
+            </span>
+
+            <span style="
+                color:#1e8738;
+                font-size:1.2rem;">
+                🔍
+            </span>
+
+        </div>
+
+        <div class="extra-card"
+             style="background:#eef5ff;border:none;">
+
+            <div>
+                <strong>Explore Sealdah Railway</strong>
+                <br>
+                <small style="color:#555;">
+                    Eastern Railway Passenger Service
+                </small>
+            </div>
+
+            <div style="font-size:2rem;">
+                🗺️
+            </div>
+
+        </div>
+
     </div>
-    <button class="primary wide" onclick="searchTrains()">🔎 Search Live Trains</button>
-  </section>
-  <div class="quickgrid">
-    <button class="quick" onclick="openPage('pnr')"><div class="qicon">🎫</div><b>PNR Status</b><span class="muted">Check ticket</span></button>
-    <button class="quick" onclick="openPage('timetable')"><div class="qicon">🕒</div><b>Time Table</b><span class="muted">Train timings</span></button>
-    <button class="quick" onclick="openPage('map')"><div class="qicon">📍</div><b>Live Map</b><span class="muted">Route view</span></button>
-    <button class="quick" onclick="openPage('chat')"><div class="qicon">💬</div><b>Chat</b><span class="muted">Talk to users</span></button>
-    <button class="quick" onclick="openPage('alerts')"><div class="qicon">🔔</div><b>Alerts</b><span class="muted">Updates</span></button>
-  </div>
-  <div class="grid2">
-    <section class="card feature"><div class="sectionhead"><h2>Why this interface?</h2><span>PRO</span></div><ul><li>Premium mobile-first railway dashboard</li><li>Fast station autocomplete with Sealdah network</li><li>Passenger-to-passenger chat interface</li><li>Login, sign-up and personal profile</li></ul></section>
-    <section class="card feature"><div class="sectionhead"><h2>Community</h2><span class="muted">Social</span></div><p class="sub">Find a passenger by name or username and open a private chat. The current front-end stores demo accounts locally.</p><button class="primary" style="margin-top:17px" onclick="openPage('chat')">Open Community Chat</button></section>
-  </div>
+
+
+    <!-- TRAIN SCREEN -->
+    <div id="screen-trains">
+
+        <div
+            style="
+                background:white;
+                padding:15px;
+                border-radius:8px;
+                margin-bottom:15px;
+                font-weight:bold;
+                color:#333;
+                text-align:center;
+                box-shadow:0 1px 3px rgba(0,0,0,.1);
+            "
+            id="route-title">
+
+            Route Details
+
+        </div>
+
+        <div id="train-results"></div>
+
+    </div>
+
+
+    <!-- MAP SCREEN -->
+    <div id="screen-map">
+
+        <div class="map-status-bar">
+
+            <div
+                id="map-train-title"
+                style="color:#1963a6;font-weight:bold;">
+                Train Live Map
+            </div>
+
+            <div style="color:#1e8738;">
+                🟢 On Time
+            </div>
+
+        </div>
+
+        <div id="map-container"></div>
+
+    </div>
+
 </div>
 
-<div id="page-trains" class="page hidden"><div class="backline"><div><h2>Train Search</h2><div class="muted" id="routeLabel">Select a route from Home</div></div><button class="ghost" onclick="openPage('home')">← Home</button></div><div class="card results" id="trainResults"></div></div>
-<div id="page-map" class="page hidden"><div class="backline"><div><h2>Live Route Map</h2><div class="muted">Visual route overview</div></div><button class="ghost" onclick="openPage('home')">← Back</button></div><div id="map"></div></div>
-<div id="page-pnr" class="page hidden"><div class="card"><div class="sectionhead"><div><h2>PNR Status</h2><div class="muted">Enter a 10 digit PNR</div></div>🎫</div><div class="field"><input id="pnrInput" inputmode="numeric" maxlength="10" placeholder="1234567890"></div><button class="primary wide" onclick="checkPNR()">Check PNR</button><div id="pnrResult" style="margin-top:14px"></div></div></div>
-<div id="page-timetable" class="page hidden"><div class="card"><div class="sectionhead"><div><h2>Time Table</h2><div class="muted">Search trains using station names</div></div>🕒</div><div class="field"><input id="ttSearch" placeholder="Search Sealdah, Ranaghat, Shantipur..."></div><div id="ttResults" class="results" style="margin-top:12px"></div></div></div>
-<div id="page-alerts" class="page hidden"><div class="card"><div class="sectionhead"><div><h2>Alerts & Updates</h2><div class="muted">Important passenger information</div></div>🔔</div><div class="userrow"><div><b>Service interface</b><div class="muted">Premium dashboard is ready.</div></div><span class="livepill">READY</span></div><div class="userrow"><div><b>Chat service</b><div class="muted">Local demo mode until a shared database is connected.</div></div><span class="livepill">INFO</span></div></div></div>
-<div id="page-profile" class="page hidden"><div class="card"><div class="profilebar"><div class="miniavatar" id="profileAvatar">U</div><div><h2 id="profileName">User</h2><div class="muted" id="profileHandle">@user</div></div></div><div style="margin-top:20px" class="userrow"><div><b>Account</b><div class="muted">Logged in on this device</div></div><span class="livepill">ACTIVE</span></div><button class="ghost" style="margin-top:15px;width:100%" onclick="logout()">Logout</button></div></div>
-<div id="page-chat" class="page hidden">
-  <div class="chatwrap">
-    <aside class="chatlist"><div class="chatsearch"><input id="userSearch" placeholder="Search people..." oninput="renderUsers()"></div><div id="userList"></div></aside>
-    <section class="chatpanel"><div class="chathead"><div class="miniavatar" id="chatAvatar">AI</div><div><b id="chatTitle">Sealdah AI Bot</b><div class="muted" id="chatStatus">Online</div></div></div><div class="chatbody" id="chatBody"></div><div class="chatinput"><input id="chatInput" placeholder="Write a message..." onkeydown="if(event.key==='Enter')sendMessage()"><button class="primary" onclick="sendMessage()">Send</button></div></section>
-  </div>
-</div>
-</main></div>
-<nav class="bottomnav"><button class="active" data-page="home" onclick="openPage('home')"><span>⌂</span>Home</button><button data-page="trains" onclick="openPage('trains')"><span>🚆</span>Trains</button><button data-page="chat" onclick="openPage('chat')"><span>💬</span>Chat</button><button data-page="profile" onclick="openPage('profile')"><span>👤</span>Profile</button></nav>
-</div>
-<div id="toast" class="toast"></div>
+
+<!-- LEAFLET -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
 <script>
-const API_BASE="https://whatsapp-ai-bot-6sva.onrender.com";
-const rawStations=[
-            {c:'SDAH', n:'Sealdah'}, {c:'BNXR', n:'Bidhannagar Road'}, {c:'DDJ', n:'Dum Dum Jn'}, {c:'BLH', n:'Belgharia'}, {c:'AGP', n:'Agarpara'}, {c:'SEP', n:'Sodepur'}, {c:'KDH', n:'Khardah'}, {c:'TGH', n:'Titagarh'}, {c:'BP', n:'Barrackpur'}, {c:'PT', n:'Palta'}, {c:'IP', n:'Ichhapur'}, {c:'SNR', n:'Shyamnagar'}, {c:'JGDL', n:'Jagaddal'}, {c:'KNR', n:'Kankinara'}, {c:'NH', n:'Naihati'}, {c:'HLR', n:'Halisahar'}, {c:'KPA', n:'Kanchrapara'}, {c:'KYI', n:'Kalyani'}, {c:'MPJ', n:'Madanpur'}, {c:'SMX', n:'Simurali'}, {c:'PXR', n:'Palpara'}, {c:'CDH', n:'Chakdah'}, {c:'PDX', n:'Payradanga'}, {c:'RHA', n:'Ranaghat'},
-            {c:'KLNP', n:'Kalinarayanpur'}, {c:'BIJ', n:'Birnagar'}, {c:'THP', n:'Taherpur'}, {c:'BDZ', n:'Badkulla'}, {c:'AG', n:'Aranghata'}, {c:'BNKA', n:'Bankimnagar'}, {c:'MAJ', n:'Majhergram'}, {c:'BHNA', n:'Bhayna'}, {c:'BGL', n:'Bagula'}, {c:'MYHT', n:'Mayurhat'}, {c:'TNX', n:'Taraknagar'}, {c:'MIJ', n:'Majhdia'}, {c:'BPN', n:'Banpur'}, {c:'HRSR', n:'Harishnagar'}, {c:'GEDE', n:'Gede'}, {c:'HBE', n:'Habibpur'}, {c:'FLU', n:'Fulia'}, {c:'STB', n:'Shantipur'}, {c:'BTKB', n:'Bathna Krittibas'},
-            {c:'KNJ', n:'Krishnanagar City Jn'}, {c:'BPD', n:'Bahadurpur'}, {c:'DHU', n:'Dhubulia'}, {c:'MGM', n:'Muragachha'}, {c:'SVH', n:'Sonadanga'}, {c:'BTY', n:'Bethuadahari'}, {c:'DEB', n:'Debagram'}, {c:'PCX', n:'Paglachandi'}, {c:'PLY', n:'Plassey'}, {c:'REJ', n:'Rejinagar'}, {c:'BEB', n:'Beldanga'}, {c:'BFT', n:'Bhabta'}, {c:'SGV', n:'Sargachhi'}, {c:'BPC', n:'Berhampur Court'}, {c:'CSZ', n:'Cossimbazar'}, {c:'MBB', n:'Murshidabad'}, {c:'JJG', n:'Jiaganj'}, {c:'BQG', n:'Bhagawangola'}, {c:'KRP', n:'Krishnapur Jn'}, {c:'LGL', n:'Lalgola'},
-            {c:'DDC', n:'Dum Dum Cantonment'}, {c:'DGNR', n:'Durganagar'}, {c:'BBT', n:'Birati'}, {c:'BRPK', n:'Bisharpara Kodalia'}, {c:'NBE', n:'New Barrackpur'}, {c:'MMG', n:'Madhyamgram'}, {c:'HHR', n:'Hridaypur'}, {c:'BT', n:'Barasat'}, {c:'BMG', n:'Bamangachi'}, {c:'DTK', n:'Duttapukur'}, {c:'BZRA', n:'Bira'}, {c:'GMA', n:'Guma'}, {c:'ASKR', n:'Ashokenagar Road'}, {c:'HB', n:'Habra'}, {c:'MSL', n:'Machlandapur'}, {c:'GBG', n:'Gobardanga'}, {c:'TKNR', n:'Thakurnagar'}, {c:'CDP', n:'Chandpara'}, {c:'BNAA', n:'Bibhutibhusan Halt'}, {c:'BNJ', n:'Bongaon'}, {c:'GN', n:'Gopalnagar'}, {c:'PTPL', n:'Petrapole'},
-            {c:'KZPR', n:'Kazipara'}, {c:'KBGH', n:'Karea Kadambagachhi'}, {c:'BHKA', n:'Bahira Kalibari'}, {c:'SXC', n:'Sondalia'}, {c:'BGRD', n:'Beliaghata Road'}, {c:'LBTL', n:'Lebutala'}, {c:'BSLA', n:'Bhasila'}, {c:'HRO', n:'Haroa Road'}, {c:'KMZA', n:'Kankra Mirzanagar'}, {c:'MPE', n:'Malatipur'}, {c:'GGV', n:'Ghoradasghona'}, {c:'CQR', n:'Champapukur'}, {c:'BBLA', n:'Bhyabla'}, {c:'BSHT', n:'Basirhat'}, {c:'MATN', n:'Matnia Anantapur'}, {c:'MPN', n:'Madhyampur'}, {c:'NMDR', n:'Nimdhari'}, {c:'TKF', n:'Taki Road'}, {c:'HNB', n:'Hasnabad'},
-            {c:'LKF', n:'Lake Gardens'}, {c:'TLG', n:'Tollygunge'}, {c:'NACC', n:'New Alipur'}, {c:'MJT', n:'Majherhat'}, {c:'BRJ', n:'Brace Bridge'}, {c:'SSP', n:'Santoshpur'}, {c:'AQR', n:'Akra'}, {c:'NAI', n:'Nungi'}, {c:'BGB', n:'Budge Budge'},
-            {c:'BLN', n:'Ballygunge'}, {c:'PQS', n:'Park Circus'}, {c:'DHK', n:'Dhakuria'}, {c:'JDP', n:'Jadavpur'}, {c:'BGJT', n:'Baghajatin'}, {c:'GIA', n:'Garia'}, {c:'NGRI', n:'New Garia'}, {c:'NRPR', n:'Narendrapur'}, {c:'SPR', n:'Sonarpur'}, {c:'BDYP', n:'Bidyadharpur'}, {c:'KLKR', n:'Kalikapur'}, {c:'CHT', n:'Champahati'}, {c:'PLF', n:'Piali'}, {c:'GOF', n:'Ghutiari Sharif'}, {c:'BTPG', n:'Bethberia Ghola'}, {c:'TLX', n:'Taldi'}, {c:'CG', n:'Canning'},
-            {c:'SBGR', n:'Subhashgram'}, {c:'MAK', n:'Mallikpur'}, {c:'BRP', n:'Baruipur'}, {c:'SSRD', n:'Shasan Road'}, {c:'KRXM', n:'Krishnamohan'}, {c:'DPDP', n:'Dhapdhapi'}, {c:'SJPR', n:'Surjyapur'}, {c:'GCN', n:'Gocharan'}, {c:'HGA', n:'Hogla'}, {c:'DBT', n:'Dakshin Barasat'}, {c:'BARU', n:'Baharu'}, {c:'JNM', n:'Jaynagar Majilpur'}, {c:'MPRD', n:'Mathurapur Road'}, {c:'MDBP', n:'Madhabpur'}, {c:'LKPR', n:'Lakshmikantapur'}, {c:'URP', n:'Udairampur'}, {c:'KUL', n:'Kulpi'}, {c:'KARN', n:'Karanjali'}, {c:'NCPM', n:'Nischindapur Market'}, {c:'NCP', n:'Nischindapur'}, {c:'MDGB', n:'Madhabnagar'}, {c:'KHGR', n:'Kashinagar'}, {c:'KWDP', n:'Kakdwip'}, {c:'UKHT', n:'Ukilerhat'}, {c:'NMKA', n:'Namkhana'},
-            {c:'HT', n:'Hotor'}, {c:'DMU', n:'Dhamua'}, {c:'MGT', n:'Magrahat'}, {c:'D', n:'Deula'}, {c:'NTA', n:'Netra'}, {c:'BSD', n:'Basuldanga'}, {c:'GURN', n:'Gurudasnagar'}, {c:'SNU', n:'Sangrampur'}, {c:'DH', n:'Diamond Harbour'},
-            {c:'KOAA', n:'Kolkata Terminal'}, {c:'BARN', n:'Baranagar Road'}, {c:'DAKE', n:'Dakshineswar'}, {c:'BLYG', n:'Ballyghat'}, {c:'PTKR', n:'Patipukur'}, {c:'CP', n:'Chitpur'}];
-const stations=rawStations.map(x=>({name:x.n,code:x.c}));
-const sampleTrains=[["Sealdah–Shantipur Local","SDAH","STB","06:20","08:04"],["Sealdah–Krishnanagar Local","SDAH","KNJ","07:10","09:16"],["Sealdah–Ranaghat Local","SDAH","RHA","08:05","09:42"],["Sealdah–Naihati Local","SDAH","NH","09:00","09:58"]];
-let currentUser=JSON.parse(localStorage.getItem("sda_user")||"null"),activeChat="AI",messages=JSON.parse(localStorage.getItem("sda_messages")||"{}"),mapInstance=null;
-const $=id=>document.getElementById(id);
-function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2400)}
-function showLogin(){$("loginForm").classList.remove("hidden");$("signupForm").classList.add("hidden")}
-function showSignup(){$("loginForm").classList.add("hidden");$("signupForm").classList.remove("hidden")}
-function signup(){const name=$("signupName").value.trim(),username=$("signupUser").value.trim().toLowerCase(),email=$("signupEmail").value.trim().toLowerCase(),password=$("signupPass").value;if(!name||!username||!email||password.length<6)return toast("Please complete all fields. Password needs 6+ characters.");let users=JSON.parse(localStorage.getItem("sda_users")||"[]");if(users.some(u=>u.username===username||u.email===email))return toast("Username or email already exists.");const u={name,username,email,password};users.push(u);localStorage.setItem("sda_users",JSON.stringify(users));currentUser=u;localStorage.setItem("sda_user",JSON.stringify(u));enterApp();toast("Account created successfully.")}
-function login(){const id=$("loginId").value.trim().toLowerCase(),password=$("loginPass").value;let users=JSON.parse(localStorage.getItem("sda_users")||"[]"),u=users.find(x=>(x.username===id||x.email===id)&&x.password===password);if(!u){if(id==="demo"&&password==="demo123")u={name:"Demo Passenger",username:"demo",email:"demo@local"};else return toast("Invalid login details.")}currentUser=u;localStorage.setItem("sda_user",JSON.stringify(u));enterApp()}
-function logout(){currentUser=null;localStorage.removeItem("sda_user");$("app").classList.add("hidden");$("authScreen").classList.remove("hidden");showLogin()}
-function enterApp(){$("authScreen").classList.add("hidden");$("app").classList.remove("hidden");updateProfile();openPage("home")}
-function updateProfile(){if(!currentUser)return;const letter=(currentUser.name||"U")[0].toUpperCase();$("profileName").textContent=currentUser.name;$("profileHandle").textContent="@"+currentUser.username;$("profileAvatar").textContent=letter;$("topAvatar").textContent=letter}
-function openPage(page){document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));const p=$("page-"+page);if(p)p.classList.remove("hidden");document.querySelectorAll(".navitem,.bottomnav button").forEach(x=>x.classList.toggle("active",x.dataset.page===page));if(page==="chat"){renderUsers();renderChat()}if(page==="map")setTimeout(initMap,150);if(page==="timetable")renderTimetable("")}
-function setupAutocomplete(input,list){input.addEventListener("input",()=>{const q=input.value.toLowerCase().trim();list.innerHTML="";if(!q)return list.classList.add("hidden");const arr=stations.filter(s=>s.name.toLowerCase().includes(q)||s.code.toLowerCase().includes(q)).slice(0,12);arr.forEach(s=>{const d=document.createElement("div");d.className="autoitem";d.innerHTML='<span class="code">'+s.code+'</span><span>'+s.name+"</span>";d.onclick=()=>{input.value=s.name;input.dataset.code=s.code;list.classList.add("hidden")};list.appendChild(d)});list.classList.remove("hidden")});document.addEventListener("click",e=>{if(e.target!==input&&!list.contains(e.target))list.classList.add("hidden")})}
-setupAutocomplete($("from"),$("fromList"));setupAutocomplete($("to"),$("toList"));
-function swapRoute(){[$("from").value,$("to").value]=[$("to").value,$("from").value];[$("from").dataset.code,$("to").dataset.code]=[$("to").dataset.code,$("from").dataset.code]}
-function searchTrains(){const a=$("from").value.trim(),b=$("to").value.trim();if(!a||!b)return toast("Select both stations.");$("routeLabel").textContent=a+" → "+b;openPage("trains");$("trainResults").innerHTML="";for(let i=0;i<4;i++){const d=document.createElement("div");d.className="train";d.innerHTML='<div><h3>'+((i===0?"Sealdah":a.split(" ")[0])+" • "+(10000+i*137))+'</h3><p>Departure '+String(6+i).padStart(2,"0")+":0"+(i+1)+' • Arrival '+String(7+i).padStart(2,"0")+":2"+i+' • '+b+'</p></div><span class="livepill">LIVE READY</span>';d.onclick=()=>showRoute(a,b);$("trainResults").appendChild(d)}toast("Route loaded.")}
-function initMap(){if(mapInstance)return;mapInstance=L.map("map").setView([22.567,88.371],9);L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{attribution:"© OpenStreetMap & CARTO"}).addTo(mapInstance)}
-function showRoute(a,b){openPage("map");setTimeout(()=>{initMap();const f=stations.find(s=>s.name.toLowerCase()===a.toLowerCase())||stations[0],t=stations.find(s=>s.name.toLowerCase()===b.toLowerCase())||stations[1],coords={SDAH:[22.567,88.371],STB:[23.245,88.434],RHA:[23.176,88.528],KNJ:[23.401,88.503],NH:[22.894,88.419],BRP:[22.361,88.432],DH:[22.189,88.192]},fc=coords[f.code]||[22.567,88.371],tc=coords[t.code]||[23.245,88.434];L.polyline([fc,tc],{color:"#38bdf8",weight:5,dashArray:"10 8"}).addTo(mapInstance);L.marker(fc).addTo(mapInstance).bindPopup(f.name).openPopup();L.marker(tc).addTo(mapInstance).bindPopup(t.name);mapInstance.fitBounds([fc,tc],{padding:[35,35]})},120)}
-function checkPNR(){const p=$("pnrInput").value.trim();if(!/^\d{10}$/.test(p))return toast("Enter a valid 10 digit PNR.");$("pnrResult").innerHTML='<div class="userrow"><div><b>PNR '+p+'</b><div class="muted">Demo interface result. Connect your live PNR API to show real status.</div></div><span class="livepill">API READY</span></div>'}
-function renderTimetable(q){$("ttResults").innerHTML=sampleTrains.filter(t=>t.join(" ").toLowerCase().includes(q.toLowerCase())).map(t=>'<div class="train"><div><h3>'+t[0]+'</h3><p>'+t[3]+' → '+t[4]+' • '+t[2]+'</p></div><span class="livepill">TIMING</span></div>').join("")}
-$("ttSearch").addEventListener("input",e=>renderTimetable(e.target.value));
-function users(){let local=JSON.parse(localStorage.getItem("sda_users")||"[]"),demo=[{name:"Sealdah AI Bot",username:"AI"},{name:"Railway Help Desk",username:"railhelp"},{name:"Demo Passenger",username:"demo"}],all=[...demo,...local.filter(u=>u.username!==currentUser?.username)],seen=new Set();return all.filter(u=>!seen.has(u.username)&&seen.add(u.username))}
-function renderUsers(){const q=($("userSearch")?.value||"").toLowerCase(),arr=users().filter(u=>(u.name+" "+u.username).toLowerCase().includes(q));$("userList").innerHTML=arr.map(u=>'<div class="conversation '+(activeChat===u.username?"active":"")+'" onclick="selectChat(\''+u.username+'\')"><div class="miniavatar">'+(u.name||u.username)[0].toUpperCase()+'</div><div class="info"><b>'+u.name+'</b><small>@'+u.username+'</small></div></div>').join("")}
-function selectChat(u){activeChat=u;renderUsers();renderChat()}
-function renderChat(){const u=users().find(x=>x.username===activeChat)||{name:"Sealdah AI Bot",username:"AI"};$("chatTitle").textContent=u.name;$("chatStatus").textContent=activeChat==="AI"?"Online • AI assistant":"Passenger chat";$("chatAvatar").textContent=(u.name||"A")[0].toUpperCase();const key=[currentUser?.username||"guest",activeChat].sort().join("__"),arr=messages[key]||[];$("chatBody").innerHTML="";if(!arr.length)addBubble("them",activeChat==="AI"?"Hello! I am Sealdah AI Bot. Ask me about trains, stations or railway services.":"Start a new conversation.");arr.forEach(m=>addBubble(m.from==="me"?"me":"them",m.text))}
-function addBubble(side,text){const d=document.createElement("div");d.className="bubble "+side;d.textContent=text;$("chatBody").appendChild(d);$("chatBody").scrollTop=$("chatBody").scrollHeight}
-function sendMessage(){const text=$("chatInput").value.trim();if(!text)return;const key=[currentUser?.username||"guest",activeChat].sort().join("__");messages[key] ||= [];messages[key].push({from:"me",text});localStorage.setItem("sda_messages",JSON.stringify(messages));$("chatInput").value="";renderChat();if(activeChat==="AI")setTimeout(()=>{messages[key].push({from:"them",text:"Thanks! Your message was received. Connect the backend API for live AI replies."});localStorage.setItem("sda_messages",JSON.stringify(messages));renderChat()},450)}
-if(currentUser)enterApp();
+
+/* =========================================================
+   SUPABASE CONFIGURATION
+   ========================================================= */
+
+const SUPABASE_URL =
+    "https://wtvrbfqezpmxutnwjdsp.supabase.co";
+
+
+/*
+   IMPORTANT:
+   এখানে তোমার Supabase Publishable Key বসাও।
+*/
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_oFOo4DYfj1DU-tr_3n6kjA_ChfRYrqG";
+
+
+const supabaseClient =
+    window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+/* =========================================================
+   GLOBAL DATABASE
+   ========================================================= */
+
+let stationDatabase = [];
+
+
+/* =========================================================
+   REAL COORDINATES FOR MAJOR STATIONS
+   ========================================================= */
+
+const realCoords = {
+
+    SDAH: [22.567, 88.371],
+
+    BNXR: [22.583, 88.390],
+
+    DDJ: [22.622, 88.393],
+
+    NH: [22.894, 88.419],
+
+    RHA: [23.176, 88.528],
+
+    STB: [23.245, 88.434],
+
+    KNJ: [23.401, 88.503],
+
+    BNJ: [23.045, 88.825],
+
+    BRP: [22.361, 88.432],
+
+    DH: [22.189, 88.192]
+
+};
+
+
+/* =========================================================
+   LOAD STATIONS FROM SUPABASE
+   ========================================================= */
+
+async function loadStations() {
+
+    const loadingBox =
+        document.getElementById("loading-box");
+
+    const errorBox =
+        document.getElementById("error-box");
+
+    try {
+
+        loadingBox.style.display = "block";
+
+        errorBox.style.display = "none";
+
+        const {
+            data,
+            error
+        } = await supabaseClient
+
+            .from("stations")
+
+            .select(
+                "station_code, station_name, line, zone, active"
+            )
+
+            .eq("active", true)
+
+            .order("station_name");
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        if (!data || data.length === 0) {
+
+            throw new Error(
+                "No active stations found in Supabase."
+            );
+
+        }
+
+
+        stationDatabase = data.map((station, index) => {
+
+            let lat =
+                22.567 +
+                (Math.random() - 0.5) * 1.5;
+
+            let lng =
+                88.371 +
+                (Math.random() - 0.5) * 1.5;
+
+
+            if (realCoords[station.station_code]) {
+
+                lat =
+                    realCoords[station.station_code][0];
+
+                lng =
+                    realCoords[station.station_code][1];
+
+            }
+
+
+            return {
+
+                name: station.station_name,
+
+                code: station.station_code,
+
+                line: station.line || "",
+
+                zone: station.zone || "Eastern Railway",
+
+                active: station.active,
+
+                lat: lat,
+
+                lng: lng
+
+            };
+
+        });
+
+
+        loadingBox.innerHTML =
+            "✅ " +
+            stationDatabase.length +
+            " stations loaded successfully";
+
+
+        loadingBox.style.color = "#1e8738";
+
+
+        document.getElementById(
+            "from-station"
+        ).disabled = false;
+
+
+        document.getElementById(
+            "to-station"
+        ).disabled = false;
+
+
+        document.getElementById(
+            "find-button"
+        ).disabled = false;
+
+
+        setupAutocomplete(
+            document.getElementById("from-station"),
+            document.getElementById("from-autocomplete-list")
+        );
+
+
+        setupAutocomplete(
+            document.getElementById("to-station"),
+            document.getElementById("to-autocomplete-list")
+        );
+
+
+        console.log(
+            "Supabase stations loaded:",
+            stationDatabase.length
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Supabase station loading error:",
+            error
+        );
+
+
+        loadingBox.style.display = "none";
+
+
+        errorBox.style.display = "block";
+
+
+        errorBox.innerHTML = `
+            <strong>⚠️ Station database loading failed</strong>
+            <br><br>
+            ${escapeHtml(error.message || "Unknown error")}
+            <br><br>
+            Please check Supabase API / RLS settings.
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(value) {
+
+    return String(value)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================================================
+   AUTOCOMPLETE
+   ========================================================= */
+
+function setupAutocomplete(
+    inputElement,
+    listElement
+) {
+
+    inputElement.addEventListener(
+        "input",
+        function() {
+
+            const val =
+                this.value.trim().toLowerCase();
+
+
+            listElement.innerHTML = "";
+
+
+            if (!val) {
+
+                listElement.style.display =
+                    "none";
+
+                return;
+
+            }
+
+
+            const matches =
+                stationDatabase
+
+                    .filter(st =>
+
+                        st.name
+                            .toLowerCase()
+                            .includes(val)
+
+                        ||
+
+                        st.code
+                            .toLowerCase()
+                            .includes(val)
+
+                    )
+
+                    .slice(0, 20);
+
+
+            listElement.style.display =
+                "block";
+
+
+            if (matches.length === 0) {
+
+                listElement.innerHTML = `
+                    <div class="autocomplete-item"
+                         style="color:red;">
+                        No station found
+                    </div>
+                `;
+
+                return;
+
+            }
+
+
+            matches.forEach(match => {
+
+                const div =
+                    document.createElement("div");
+
+
+                div.className =
+                    "autocomplete-item";
+
+
+                div.innerHTML = `
+
+                    <span class="station-code-badge">
+                        ${escapeHtml(match.code)}
+                    </span>
+
+                    <span>
+                        ${escapeHtml(match.name)}
+                    </span>
+
+                `;
+
+
+                div.addEventListener(
+                    "click",
+                    function() {
+
+                        inputElement.value =
+                            match.name;
+
+                        inputElement.dataset.code =
+                            match.code;
+
+                        listElement.style.display =
+                            "none";
+
+                    }
+                );
+
+
+                listElement.appendChild(div);
+
+            });
+
+        }
+    );
+
+
+    document.addEventListener(
+        "click",
+        function(e) {
+
+            if (
+                e.target !== inputElement &&
+                !listElement.contains(e.target)
+            ) {
+
+                listElement.style.display =
+                    "none";
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SWAP STATIONS
+   ========================================================= */
+
+function swapStations() {
+
+    const fromInput =
+        document.getElementById(
+            "from-station"
+        );
+
+    const toInput =
+        document.getElementById(
+            "to-station"
+        );
+
+
+    const temp =
+        fromInput.value;
+
+
+    fromInput.value =
+        toInput.value;
+
+
+    toInput.value =
+        temp;
+
+
+    const tempCode =
+        fromInput.dataset.code;
+
+
+    fromInput.dataset.code =
+        toInput.dataset.code;
+
+
+    toInput.dataset.code =
+        tempCode;
+
+}
+
+
+/* =========================================================
+   FIND TRAINS
+   ========================================================= */
+
+function findTrains() {
+
+    const fromInput =
+        document.getElementById(
+            "from-station"
+        ).value.trim();
+
+
+    const toInput =
+        document.getElementById(
+            "to-station"
+        ).value.trim();
+
+
+    if (!fromInput || !toInput) {
+
+        alert(
+            "Please select both From and To stations."
+        );
+
+        return;
+
+    }
+
+
+    const fromStation =
+        stationDatabase.find(
+            s => s.name === fromInput
+        );
+
+
+    const toStation =
+        stationDatabase.find(
+            s => s.name === toInput
+        );
+
+
+    if (!fromStation || !toStation) {
+
+        alert(
+            "Please select stations from the suggestion list."
+        );
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "app-header"
+    ).innerHTML = `
+
+        <button
+            class="back-btn"
+            onclick="goHome()">
+
+            ← &nbsp; Back
+
+        </button>
+
+    `;
+
+
+    document.getElementById(
+        "screen-search"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "screen-trains"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "route-title"
+    ).innerText =
+        `${fromStation.name} ➔ ${toStation.name}`;
+
+
+    const resultsDiv =
+        document.getElementById(
+            "train-results"
+        );
+
+
+    resultsDiv.innerHTML = "";
+
+
+    /*
+       NOTE:
+       এখানে এখনো actual train timetable নেই।
+       তাই demo train cards দেখানো হচ্ছে।
+       Station data কিন্তু Supabase থেকে এসেছে।
+    */
+
+    const trains = [
+
+        {
+            number: "31311",
+            name: `${fromStation.name} Local`,
+            departure: "06:15 AM",
+            arrival: "07:05 AM"
+        },
+
+        {
+            number: "31315",
+            name: `${fromStation.name} Local`,
+            departure: "07:10 AM",
+            arrival: "08:00 AM"
+        },
+
+        {
+            number: "31321",
+            name: `${fromStation.name} Local`,
+            departure: "08:20 AM",
+            arrival: "09:10 AM"
+        },
+
+        {
+            number: "31327",
+            name: `${fromStation.name} Local`,
+            departure: "09:30 AM",
+            arrival: "10:20 AM"
+        }
+
+    ];
+
+
+    trains.forEach(train => {
+
+        const card =
+            document.createElement("div");
+
+
+        card.className =
+            "train-card";
+
+
+        card.innerHTML = `
+
+            <div class="train-details">
+
+                <h4>
+                    ${train.number}
+                    -
+                    ${escapeHtml(train.name)}
+                </h4>
+
+                <p>
+                    Departs:
+                    <b>${train.departure}</b>
+                    |
+                    Arrives:
+                    <b>${train.arrival}</b>
+                </p>
+
+                <p
+                    style="
+                        margin-top:5px;
+                        color:#1e8738;
+                    "
+                >
+                    Run Days: Daily
+                </p>
+
+            </div>
+
+            <div class="view-map-icon">
+                📍
+            </div>
+
+        `;
+
+
+        card.onclick =
+            () =>
+                openMap(
+                    fromStation.name,
+                    toStation.name,
+                    train.number
+                );
+
+
+        resultsDiv.appendChild(card);
+
+    });
+
+}
+
+
+/* =========================================================
+   GO HOME
+   ========================================================= */
+
+function goHome() {
+
+    document.getElementById(
+        "screen-search"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "screen-trains"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "screen-map"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "app-header"
+    ).innerHTML = `
+
+        <div class="header-left">
+
+            <span class="header-icon">
+                ☰
+            </span>
+
+            <span>
+                Sealdah Train Service
+            </span>
+
+        </div>
+
+        <span class="header-icon">
+            🎤
+        </span>
+
+    `;
+
+}
+
+
+/* =========================================================
+   BACK TO TRAIN LIST
+   ========================================================= */
+
+function goBackToTrains() {
+
+    document.getElementById(
+        "screen-search"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "screen-trains"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "screen-map"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "app-header"
+    ).innerHTML = `
+
+        <button
+            class="back-btn"
+            onclick="goHome()">
+
+            ← &nbsp; Train List
+
+        </button>
+
+    `;
+
+}
+
+
+/* =========================================================
+   MAP
+   ========================================================= */
+
+let leafletMap = null;
+
+let trainMarker = null;
+
+let routeLine = null;
+
+
+function openMap(
+    fromName,
+    toName,
+    trainNumber
+) {
+
+    document.getElementById(
+        "screen-trains"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "screen-map"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "app-header"
+    ).innerHTML = `
+
+        <button
+            class="back-btn"
+            onclick="goBackToTrains()">
+
+            ← &nbsp; Train List
+
+        </button>
+
+    `;
+
+
+    document.getElementById(
+        "map-train-title"
+    ).innerText =
+        `🚆 ${trainNumber} Live Map`;
+
+
+    if (!leafletMap) {
+
+        leafletMap =
+            L.map("map-container")
+             .setView(
+                 [22.567, 88.371],
+                 9
+             );
+
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                attribution:
+                    "© OpenStreetMap"
+            }
+        ).addTo(leafletMap);
+
+    }
+
+
+    setTimeout(
+        () => {
+            leafletMap.invalidateSize();
+        },
+        200
+    );
+
+
+    const fromSt =
+        stationDatabase.find(
+            s => s.name === fromName
+        ) || stationDatabase[0];
+
+
+    const toSt =
+        stationDatabase.find(
+            s => s.name === toName
+        ) || stationDatabase[0];
+
+
+    if (routeLine) {
+
+        leafletMap.removeLayer(
+            routeLine
+        );
+
+    }
+
+
+    if (trainMarker) {
+
+        leafletMap.removeLayer(
+            trainMarker
+        );
+
+    }
+
+
+    routeLine =
+        L.polyline(
+
+            [
+                [fromSt.lat, fromSt.lng],
+
+                [toSt.lat, toSt.lng]
+            ],
+
+            {
+                color: "#1963a6",
+                weight: 4
+            }
+
+        ).addTo(leafletMap);
+
+
+    leafletMap.fitBounds(
+        routeLine.getBounds(),
+        {
+            padding: [30, 30]
+        }
+    );
+
+
+    const trainIcon =
+        L.icon({
+
+            iconUrl:
+                "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+
+            shadowUrl:
+                "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+
+            iconSize: [25, 41],
+
+            iconAnchor: [12, 41],
+
+            popupAnchor: [1, -34]
+
+        });
+
+
+    const midLat =
+        (fromSt.lat + toSt.lat) / 2;
+
+
+    const midLng =
+        (fromSt.lng + toSt.lng) / 2;
+
+
+    trainMarker =
+        L.marker(
+            [midLat, midLng],
+            {
+                icon: trainIcon
+            }
+        )
+        .addTo(leafletMap);
+
+
+    trainMarker.bindPopup(`
+
+        <b>🚆 ${escapeHtml(trainNumber)}</b>
+
+        <br><br>
+
+        Live Train Location
+
+        <br>
+
+        Between
+        ${escapeHtml(fromSt.code)}
+        →
+        ${escapeHtml(toSt.code)}
+
+    `).openPopup();
+
+}
+
+
+/* =========================================================
+   START APPLICATION
+   ========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+        loadStations();
+
+    }
+);
+
+
+/* =========================================================
+   PWA SERVICE WORKER
+   ========================================================= */
+
+if ("serviceWorker" in navigator) {
+
+    window.addEventListener(
+        "load",
+        () => {
+
+            navigator.serviceWorker
+                .register("/sw.js")
+                .catch(
+                    error =>
+                        console.log(
+                            "Service Worker:",
+                            error
+                        )
+                );
+
+        }
+    );
+
+}
+
 </script>
+
 </body>
 </html>
